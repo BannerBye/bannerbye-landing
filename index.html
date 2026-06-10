@@ -19,28 +19,9 @@
   <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cream: '#FAF7F0',
-            ink: '#0E1116',
-            smoke: '#6B7077',
-            ember: '#E85A2C',
-            emberdark: '#D04A1F',
-            mint: '#2EC4A5'
-          },
-          fontFamily: {
-            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-            sans: ['"Inter"', 'system-ui', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Tailwind: vooraf gecompileerd naar styles.css (geen runtime CDN).
+       Werkt ook met DNS-/CDN-blockers — past bij een privacy-product. -->
+  <link rel="stylesheet" href="styles.css" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -341,6 +322,44 @@
     </div>
   </section>
 
+  <!-- SELF-IMPROVING / AI -->
+  <section id="smarter" class="border-t border-black/5 bg-white/60">
+    <div class="max-w-6xl mx-auto px-6 py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">AI-driven · self-improving</p>
+      <h2 class="font-display text-4xl md:text-5xl font-semibold max-w-3xl leading-tight tracking-tight">
+        Most blockers go stale. BannerBye gets sharper.
+      </h2>
+      <p class="mt-6 text-lg text-smoke leading-relaxed max-w-2xl">
+        Websites rewrite their cookie banners constantly. Most blockers fall behind — you install one, and months later it quietly stops working. BannerBye works the other way. It catches what slips through, Anthropic's Claude checks the fix, and the improvement ships to everyone. By itself.
+      </p>
+
+      <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Step 1 -->
+        <div class="rounded-2xl border border-black/5 bg-white p-8">
+          <div class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-5">Step 1</div>
+          <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Caught</h3>
+          <p class="text-smoke leading-relaxed">A site sneaks a new banner past BannerBye. The system spots it and flags it — no bug report from you needed.</p>
+        </div>
+        <!-- Step 2 — reviewed by Anthropic's Claude -->
+        <div class="rounded-2xl border border-ember/30 bg-ember/5 p-8">
+          <div class="font-mono text-xs uppercase tracking-[0.2em] text-ember mb-5">Step 2 · Claude</div>
+          <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Reviewed by Claude</h3>
+          <p class="text-smoke leading-relaxed">Anthropic's Claude reads the fix and decides whether it's safe to trust. Clear wins ship. Anything doubtful waits for a human. The gatekeeper never guesses.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="rounded-2xl border border-black/5 bg-white p-8">
+          <div class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-5">Step 3</div>
+          <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Live within hours</h3>
+          <p class="text-smoke leading-relaxed">Approved fixes roll out to everyone automatically. Nothing to update, nothing to click. It just keeps working.</p>
+        </div>
+      </div>
+
+      <p class="mt-10 font-display text-xl md:text-2xl font-semibold tracking-tight max-w-2xl">
+        AI-driven, reviewed by Claude — a cookie killer that gets smarter on its own.
+      </p>
+    </div>
+  </section>
+
   <!-- DIFFERENTIATORS -->
   <section class="border-t border-black/5 bg-cream">
     <div class="max-w-6xl mx-auto px-6 py-24">
@@ -413,6 +432,13 @@
               <td class="py-5 px-5 text-smoke">Auto-clicks</td>
               <td class="py-5 px-5 text-smoke">Hides with CSS</td>
               <td class="py-5 px-5 text-smoke">Auto-clicks</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">Self-improving, AI-vetted</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">Sends legal GPC signal</td>
