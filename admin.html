@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>BannerBye — Reports admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --cream: #FAF7F0;
+    --ink: #0E1116;
+    --ember: #E85A2C;
+    --smoke: #6B7077;
+    --line: #E4DFD4;
+    --card: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--ember); }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 22px 80px; }
+
+  /* Header */
+  header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand .mark { width: 26px; height: 26px; }
+  .brand h1 { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; margin: 0; }
+  .brand h1 .bye { color: var(--ember); }
+  .brand .tag { font-size: 12px; color: var(--smoke); margin-left: 4px; }
+  .btn {
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    padding: 8px 14px; border-radius: 8px; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--ink); }
+  .btn.ember { background: var(--ember); border-color: var(--ember); color: #fff; }
+  .btn.ember:hover { filter: brightness(0.94); }
+
+  /* Login */
+  .login { max-width: 380px; margin: 60px auto; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  .login h2 { font-family: 'Space Grotesk', sans-serif; margin: 0 0 6px; font-size: 20px; }
+  .login p { color: var(--smoke); font-size: 13px; margin: 0 0 18px; }
+  .login input {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; margin-bottom: 12px;
+  }
+  .login input:focus { outline: none; border-color: var(--ember); }
+  .err { color: var(--ember); font-size: 13px; margin: 8px 0 0; min-height: 18px; }
+
+  /* Stats */
+  .stats { display: flex; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; min-width: 150px; }
+  .stat .n { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; line-height: 1; }
+  .stat .l { color: var(--smoke); font-size: 12px; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Tabs + controls */
+  .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tabs { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 9px; padding: 3px; }
+  .tab { font-weight: 600; font-size: 13px; padding: 7px 14px; border-radius: 7px; cursor: pointer; color: var(--smoke); border: none; background: transparent; }
+  .tab.active { background: var(--ink); color: #fff; }
+  .search { flex: 1; min-width: 180px; }
+  .search input { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .search input:focus { outline: none; border-color: var(--ember); }
+
+  /* Table */
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--smoke); font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; cursor: pointer; user-select: none; white-space: nowrap; }
+  th .arrow { color: var(--ember); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--cream); }
+  td.host { font-family: 'JetBrains Mono', monospace; }
+  td.host a { text-decoration: none; }
+  td.count { font-weight: 700; font-family: 'Space Grotesk', sans-serif; }
+  td.msg { color: var(--smoke); max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  td.ver { color: var(--smoke); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  td.act, th.act { width: 44px; text-align: center; }
+  button.del {
+    border: 1px solid var(--line); background: var(--card); color: var(--smoke);
+    width: 26px; height: 26px; border-radius: 6px; cursor: pointer; line-height: 1;
+    font-size: 13px; padding: 0;
+  }
+  button.del:hover { border-color: var(--ember); color: var(--ember); background: var(--cream); }
+  .empty { padding: 40px; text-align: center; color: var(--smoke); }
+  .muted { color: var(--smoke); font-size: 12px; }
+  .pill { display: inline-block; background: var(--cream); border: 1px solid var(--line); border-radius: 20px; padding: 3px 10px; font-size: 12px; color: var(--smoke); margin-left: 8px; }
+  .clearfilter { cursor: pointer; color: var(--ember); margin-left: 6px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div class="login" id="login">
+    <h2>Reports admin</h2>
+    <p>Enter the admin token to view broken-site reports.</p>
+    <input id="tokenInput" type="password" placeholder="ADMIN_TOKEN" autocomplete="off" />
+    <button class="btn ember" id="loginBtn" style="width:100%">Unlock</button>
+    <p class="err" id="loginErr"></p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hidden">
+    <header class="top">
+      <div class="brand">
+        <svg class="mark" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2 3 5v6c0 5 3.8 8.5 9 11 5.2-2.5 9-6 9-11V5l-9-3Z" fill="#E85A2C"/>
+          <path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1>Banner<span class="bye">Bye</span></h1>
+        <span class="tag mono">reports admin</span>
+      </div>
+      <div>
+        <button class="btn" id="refreshBtn">Refresh</button>
+        <button class="btn" id="logoutBtn">Lock</button>
+      </div>
+    </header>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="controls">
+      <div class="tabs">
+        <button class="tab active" data-view="hosts">By site</button>
+        <button class="tab" data-view="reports">All reports</button>
+      </div>
+      <div class="search">
+        <input id="searchInput" placeholder="Filter by hostname…" autocomplete="off" />
+      </div>
+    </div>
+
+    <div id="filterNote" class="muted" style="margin-bottom:10px"></div>
+    <div class="panel" id="panel"></div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var TOKEN_KEY = 'bb_admin_token';
+  var state = {
+    token: '',
+    view: 'hosts',         // 'hosts' | 'reports'
+    sortKey: '',
+    sortDir: -1,           // -1 desc, 1 asc
+    rows: [],
+    filter: '',            // client-side hostname substring (hosts view)
+    hostFilter: '',        // server-side exact host (reports view, set by clicking a host)
+  };
+
+  var el = function (id) { return document.getElementById(id); };
+
+  // ---- API ----
+  function api(params) {
+    var qs = Object.keys(params).map(function (k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+    }).join('&');
+    return fetch('/api/reports?' + qs, {
+      headers: { 'Authorization': 'Bearer ' + state.token },
+    }).then(function (r) {
+      if (r.status === 401) { throw { code: 401 }; }
+      if (!r.ok) { throw { code: r.status }; }
+      return r.json();
+    });
+  }
+
+  function apiDelete(params) {
+    var qs = Object.keys(params).map(function (k) {
+      return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+    }).join('&');
+    return fetch('/api/reports?' + qs, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + state.token },
+    }).then(function (r) {
+      if (!r.ok) { throw { code: r.status }; }
+      return r.json();
+    });
+  }
+
+  function deleteHostRow(hostname) {
+    if (!window.confirm('Alle meldingen van ' + hostname + ' verwijderen?')) return;
+    apiDelete({ hostname: hostname }).then(function () {
+      if (state.hostFilter === hostname) state.hostFilter = '';
+      loadAll();
+    }).catch(function () { window.alert('Verwijderen mislukt.'); });
+  }
+
+  function deleteReportRow(id, hostname) {
+    if (!window.confirm('Deze melding van ' + hostname + ' verwijderen?')) return;
+    apiDelete({ id: id, hostname: hostname }).then(function () {
+      loadStats();
+      if (state.view === 'reports') loadReports(); else loadHosts();
+    }).catch(function () { window.alert('Verwijderen mislukt.'); });
+  }
+
+  // ---- Auth ----
+  function tryLogin(token) {
+    el('loginErr').textContent = '';
+    state.token = token;
+    return api({ view: 'stats' }).then(function () {
+      try { sessionStorage.setItem(TOKEN_KEY, token); } catch (e) {}
+      el('login').classList.add('hidden');
+      el('dash').classList.remove('hidden');
+      loadAll();
+    }).catch(function (e) {
+      state.token = '';
+      el('loginErr').textContent = e && e.code === 401
+        ? 'Invalid token.'
+        : 'Could not reach the admin API.';
+    });
+  }
+
+  function logout() {
+    state.token = '';
+    try { sessionStorage.removeItem(TOKEN_KEY); } catch (e) {}
+    el('dash').classList.add('hidden');
+    el('login').classList.remove('hidden');
+    el('tokenInput').value = '';
+  }
+
+  // ---- Rendering ----
+  function fmtDate(ts) {
+    if (!ts) return '—';
+    var d = new Date(Number(ts));
+    return d.toLocaleString('nl-NL', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+    });
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function renderStats(s) {
+    el('stats').innerHTML =
+      '<div class="stat"><div class="n">' + (s.totalReports || 0) +
+      '</div><div class="l">Total reports</div></div>' +
+      '<div class="stat"><div class="n">' + (s.totalHosts || 0) +
+      '</div><div class="l">Sites reported</div></div>';
+  }
+
+  function header(cols) {
+    return '<tr>' + cols.map(function (c) {
+      var arrow = state.sortKey === c.key
+        ? ' <span class="arrow">' + (state.sortDir === 1 ? '▲' : '▼') + '</span>'
+        : '';
+      return '<th data-key="' + c.key + '">' + c.label + arrow + '</th>';
+    }).join('') + '<th class="act"></th></tr>';
+  }
+
+  function sortRows(rows) {
+    if (!state.sortKey) return rows;
+    var k = state.sortKey, dir = state.sortDir;
+    return rows.slice().sort(function (a, b) {
+      var av = a[k], bv = b[k];
+      if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * dir;
+      return String(av).localeCompare(String(bv)) * dir;
+    });
+  }
+
+  function renderHosts() {
+    var cols = [
+      { key: 'hostname', label: 'Site' },
+      { key: 'count', label: 'Reports' },
+      { key: 'lastTs', label: 'Last report' },
+      { key: 'lastVersion', label: 'Version' },
+    ];
+    var rows = state.rows.filter(function (r) {
+      return !state.filter || r.hostname.indexOf(state.filter) !== -1;
+    });
+    rows = sortRows(rows);
+    if (!rows.length) {
+      el('panel').innerHTML = '<div class="empty">No reports yet.</div>';
+      return;
+    }
+    var body = rows.map(function (r) {
+      return '<tr>' +
+        '<td class="host"><a href="#" data-host="' + esc(r.hostname) + '">' + esc(r.hostname) + '</a></td>' +
+        '<td class="count">' + r.count + '</td>' +
+        '<td>' + esc(fmtDate(r.lastTs)) + '</td>' +
+        '<td class="ver">' + esc(r.lastVersion || '—') + '</td>' +
+        '<td class="act"><button class="del" data-delhost="' + esc(r.hostname) + '" title="Alle meldingen van deze site verwijderen">✕</button></td>' +
+        '</tr>';
+    }).join('');
+    el('panel').innerHTML = '<table><thead>' + header(cols) +
+      '</thead><tbody>' + body + '</tbody></table>';
+    wireHostLinks();
+    wireSort();
+    wireDeleteButtons();
+  }
+
+  function renderReports() {
+    var cols = [
+      { key: 'ts', label: 'When' },
+      { key: 'hostname', label: 'Site' },
+      { key: 'version', label: 'Ver' },
+      { key: 'message', label: 'Message' },
+    ];
+    var rows = sortRows(state.rows);
+    if (!rows.length) {
+      el('panel').innerHTML = '<div class="empty">No reports' +
+        (state.hostFilter ? ' for ' + esc(state.hostFilter) : '') + '.</div>';
+      return;
+    }
+    var body = rows.map(function (r) {
+      return '<tr>' +
+        '<td>' + esc(fmtDate(r.ts)) + '</td>' +
+        '<td class="host"><a href="#" data-host="' + esc(r.hostname) + '">' + esc(r.hostname) + '</a></td>' +
+        '<td class="ver">' + esc(r.version) + '</td>' +
+        '<td class="msg" title="' + esc(r.message) + '">' + esc(r.message || '—') + '</td>' +
+        '<td class="act"><button class="del" data-delid="' + esc(r.id) + '" data-delhost="' + esc(r.hostname) + '" title="Deze melding verwijderen">✕</button></td>' +
+        '</tr>';
+    }).join('');
+    el('panel').innerHTML = '<table><thead>' + header(cols) +
+      '</thead><tbody>' + body + '</tbody></table>';
+    wireHostLinks();
+    wireSort();
+    wireDeleteButtons();
+  }
+
+  function render() {
+    el('filterNote').innerHTML = '';
+    if (state.view === 'hosts') {
+      document.querySelector('.tab[data-view="hosts"]').classList.add('active');
+      document.querySelector('.tab[data-view="reports"]').classList.remove('active');
+      el('searchInput').placeholder = 'Filter by hostname…';
+      renderHosts();
+    } else {
+      document.querySelector('.tab[data-view="reports"]').classList.add('active');
+      document.querySelector('.tab[data-view="hosts"]').classList.remove('active');
+      el('searchInput').placeholder = 'Type a hostname + Enter to filter…';
+      if (state.hostFilter) {
+        el('filterNote').innerHTML = 'Filtered to <strong class="mono">' +
+          esc(state.hostFilter) + '</strong> <span class="clearfilter" id="clearFilter">clear</span>';
+        var cf = el('clearFilter');
+        if (cf) cf.onclick = function () { state.hostFilter = ''; loadReports(); };
+      }
+      renderReports();
+    }
+  }
+
+  function wireSort() {
+    var ths = el('panel').querySelectorAll('th[data-key]');
+    Array.prototype.forEach.call(ths, function (th) {
+      th.onclick = function () {
+        var k = th.getAttribute('data-key');
+        if (state.sortKey === k) { state.sortDir = -state.sortDir; }
+        else { state.sortKey = k; state.sortDir = -1; }
+        render();
+      };
+    });
+  }
+
+  function wireDeleteButtons() {
+    var btns = el('panel').querySelectorAll('button.del');
+    Array.prototype.forEach.call(btns, function (b) {
+      b.onclick = function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        var host = b.getAttribute('data-delhost');
+        var id = b.getAttribute('data-delid');
+        if (id) deleteReportRow(id, host);
+        else deleteHostRow(host);
+      };
+    });
+  }
+
+  function wireHostLinks() {
+    var links = el('panel').querySelectorAll('a[data-host]');
+    Array.prototype.forEach.call(links, function (a) {
+      a.onclick = function (ev) {
+        ev.preventDefault();
+        state.hostFilter = a.getAttribute('data-host');
+        state.view = 'reports';
+        state.sortKey = '';
+        loadReports();
+      };
+    });
+  }
+
+  // ---- Loaders ----
+  function loadStats() {
+    return api({ view: 'stats' }).then(renderStats).catch(function () {});
+  }
+  function loadHosts() {
+    state.view = 'hosts';
+    state.sortKey = 'count'; state.sortDir = -1;
+    return api({ view: 'hosts', limit: 500 }).then(function (d) {
+      state.rows = d.hosts || [];
+      render();
+    });
+  }
+  function loadReports() {
+    state.view = 'reports';
+    if (!state.sortKey) { state.sortKey = 'ts'; state.sortDir = -1; }
+    var params = { view: 'reports', limit: 500 };
+    if (state.hostFilter) params.hostname = state.hostFilter;
+    return api(params).then(function (d) {
+      state.rows = d.reports || [];
+      render();
+    });
+  }
+  function loadAll() {
+    loadStats();
+    if (state.view === 'hosts') loadHosts(); else loadReports();
+  }
+
+  // ---- Events ----
+  el('loginBtn').onclick = function () {
+    var t = el('tokenInput').value.trim();
+    if (t) tryLogin(t);
+  };
+  el('tokenInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') el('loginBtn').click();
+  });
+  el('logoutBtn').onclick = logout;
+  el('refreshBtn').onclick = loadAll;
+
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'), function (tab) {
+    tab.onclick = function () {
+      var v = tab.getAttribute('data-view');
+      state.filter = '';
+      el('searchInput').value = '';
+      if (v === 'hosts') { state.hostFilter = ''; loadHosts(); }
+      else { loadReports(); }
+    };
+  });
+
+  el('searchInput').addEventListener('input', function (e) {
+    if (state.view === 'hosts') {
+      state.filter = e.target.value.trim().toLowerCase();
+      render();
+    }
+  });
+  el('searchInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && state.view === 'reports') {
+      var v = e.target.value.trim().toLowerCase();
+      state.hostFilter = /^[a-z0-9.-]+$/.test(v) ? v : '';
+      loadReports();
+    }
+  });
+
+  // ---- Boot ----
+  (function boot() {
+    var saved = '';
+    try { saved = sessionStorage.getItem(TOKEN_KEY) || ''; } catch (e) {}
+    if (saved) { tryLogin(saved); }
+  })();
+})();
+</script>
+</body>
+</html>

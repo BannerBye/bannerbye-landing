@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye — Cookie banners, killed before they load.</title>
+  <meta name="description" content="Cookie banners, killed before they load. BannerBye sets your privacy once and handles the rest — automatically, legally, on every site." />
+  <meta property="og:title" content="BannerBye — Cookie banners, killed before they load." />
+  <meta property="og:description" content="Set your privacy once. BannerBye handles every cookie banner before it reaches you — automatically, legally, on every site." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="BannerBye — Cookie banners, killed before they load." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BannerBye — Cookie banners, killed before they load." />
+  <meta name="twitter:description" content="Set your privacy once. BannerBye handles every cookie banner before it reaches you — automatically, on every site." />
+  <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAF7F0',
+            ink: '#0E1116',
+            smoke: '#6B7077',
+            ember: '#E85A2C',
+            emberdark: '#D04A1F',
+            mint: '#2EC4A5'
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.025em; }
+    .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+    .grain::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(14,17,22,0.04) 1px, transparent 1px);
+      background-size: 3px 3px;
+      mix-blend-mode: multiply;
+    }
+    .fade-in { animation: fade 800ms ease-out both; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* Shield check-draw animation — runs on hover and periodically */
+    .shield-check {
+      stroke-dasharray: 80;
+      stroke-dashoffset: 0;
+      animation: check-pulse 6s ease-in-out infinite;
+    }
+    @keyframes check-pulse {
+      0%, 70%, 100% { stroke-dashoffset: 0; }
+      75%           { stroke-dashoffset: 80; }
+      88%           { stroke-dashoffset: 0; }
+    }
+
+    /* Banner stack: many banners pop in, then all poof apart */
+    .banner-stack { position: absolute; inset: 0; }
+    .banner {
+      position: absolute;
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.25);
+      animation: pop-and-poof 4.2s cubic-bezier(.2,.7,.2,1) infinite;
+      opacity: 0;
+      transform-origin: center;
+      will-change: transform, opacity, filter;
+    }
+    .banner .row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+    .banner .label { font-size: 0.75rem; font-weight: 500; }
+    .banner .sub { font-size: 0.65rem; opacity: 0.7; margin-top: 2px; }
+    .banner .chips { display: flex; gap: 0.35rem; flex-shrink: 0; }
+    .banner .chip { font-size: 0.6rem; padding: 0.25rem 0.55rem; border-radius: 999px; }
+
+    @keyframes pop-and-poof {
+      0%           { opacity: 0; transform: translate(var(--tx,0), var(--ty,0)) scale(0.4) rotate(var(--rot,0deg)); filter: blur(6px); }
+      8%           { opacity: 1; transform: translate(var(--tx,0), var(--ty,0)) scale(1.06) rotate(var(--rot,0deg)); filter: blur(0); }
+      12%, 55%     { opacity: 1; transform: translate(var(--tx,0), var(--ty,0)) scale(1) rotate(var(--rot,0deg)); filter: blur(0); }
+      68%          { opacity: 1; transform: translate(calc(var(--tx,0) + var(--px,0)*0.4), calc(var(--ty,0) + var(--py,0)*0.4)) scale(1.08) rotate(calc(var(--rot,0deg) + var(--spin,0deg)*0.4)); filter: blur(1px); }
+      82%          { opacity: 0; transform: translate(calc(var(--tx,0) + var(--px,0)), calc(var(--ty,0) + var(--py,0))) scale(0.6) rotate(calc(var(--rot,0deg) + var(--spin,0deg))); filter: blur(8px); }
+      100%         { opacity: 0; transform: translate(calc(var(--tx,0) + var(--px,0)), calc(var(--ty,0) + var(--py,0))) scale(0.3) rotate(calc(var(--rot,0deg) + var(--spin,0deg))); filter: blur(10px); }
+    }
+
+    /* Little particle bits that fly out when the banners poof */
+    .particles { position: absolute; inset: 0; pointer-events: none; }
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      opacity: 0;
+      animation: particle 4.2s cubic-bezier(.2,.7,.2,1) infinite;
+    }
+    @keyframes particle {
+      0%, 60%  { opacity: 0; transform: translate(0,0) scale(0.3); }
+      68%      { opacity: 1; transform: translate(0,0) scale(1); }
+      100%     { opacity: 0; transform: translate(var(--px,0), var(--py,0)) scale(0.2); }
+    }
+  </style>
+</head>
+<body class="bg-cream text-ink antialiased selection:bg-ember selection:text-white">
+
+  <!-- NAV -->
+  <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5 group" aria-label="BannerBye">
+      <!-- Shield mark -->
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true" class="shrink-0">
+        <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z"
+              stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+        <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+        <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+        <path class="shield-check" d="M30 58 L 46 72 L 76 40"
+              stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="font-display text-xl font-semibold leading-none tracking-tight">
+        Banner<span class="text-ember">Bye</span>
+      </span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-8 text-sm text-smoke">
+      <a href="#how" class="hover:text-ink transition">How it works</a>
+      <a href="#why" class="hover:text-ink transition">The problem</a>
+      <a href="#get" class="hover:text-ink transition">Get it</a>
+    </nav>
+    <a href="#get" class="hidden sm:inline-flex items-center rounded-full bg-ink text-cream text-sm px-4 py-2 hover:bg-ember transition-colors">Install free</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative max-w-6xl mx-auto px-6 pt-20 pb-24 grain">
+    <div class="fade-in">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-6">Now available · Chrome · Firefox · Safari for iPhone &amp; iPad</p>
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl font-semibold leading-[0.95] max-w-4xl tracking-tight">
+        Cookie banners, killed.<br />
+        <span class="text-ember">Before they load.</span>
+      </h1>
+      <p class="mt-8 text-lg md:text-xl text-smoke max-w-2xl leading-relaxed">
+        Set your privacy once. BannerBye handles the rest — automatically, legally, everywhere you browse.
+      </p>
+
+      <div class="mt-10 flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+        <a href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg" target="_blank" rel="noopener" class="inline-flex items-center rounded-full bg-ember hover:bg-emberdark text-white font-medium px-6 py-3 transition-colors shadow-[0_1px_0_0_rgba(0,0,0,0.06)]">
+          Add to Chrome — free
+          <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12M12 6l4 4-4 4"/></svg>
+        </a>
+        <a href="https://addons.mozilla.org/firefox/addon/bannerbye/" target="_blank" rel="noopener" class="inline-flex items-center rounded-full border border-ink/15 hover:border-ember text-ink font-medium px-6 py-3 transition-colors">
+          Add to Firefox
+        </a>
+        <a href="https://apps.apple.com/app/id6771131989" target="_blank" rel="noopener" class="inline-flex items-center rounded-full border border-ink/15 hover:border-ember text-ink font-medium px-6 py-3 transition-colors">
+          Get for iPhone &amp; iPad
+        </a>
+      </div>
+      <p class="mt-4 text-sm text-smoke">Free on Chrome &amp; Firefox · €1.99 on iPhone &amp; iPad. Also works on Edge and Brave.</p>
+    </div>
+
+    <!-- Visual: fake banner getting dismissed -->
+    <div class="mt-20 relative max-w-3xl">
+      <div class="rounded-2xl bg-white border border-black/5 shadow-sm overflow-hidden">
+        <div class="flex items-center gap-2 px-4 py-3 border-b border-black/5 bg-cream">
+          <span class="h-2.5 w-2.5 rounded-full bg-red-300"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-yellow-300"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-green-300"></span>
+          <span class="ml-3 font-mono text-xs text-smoke">google.com</span>
+          <!-- Tiny shield mark in toolbar, right side -->
+          <div class="ml-auto flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+              <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z"
+                    stroke="#0E1116" stroke-width="8" stroke-linejoin="round" fill="none"/>
+              <path d="M30 58 L 46 72 L 76 40"
+                    stroke="#E85A2C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+        </div>
+        <div class="relative h-72 md:h-80 bg-gradient-to-br from-white to-cream overflow-hidden">
+          <div class="absolute inset-0 p-8">
+            <div class="h-3 w-40 bg-black/10 rounded mb-4"></div>
+            <div class="h-3 w-72 bg-black/5 rounded mb-2"></div>
+            <div class="h-3 w-64 bg-black/5 rounded mb-2"></div>
+            <div class="h-3 w-56 bg-black/5 rounded"></div>
+          </div>
+
+          <!-- Banner swarm: many banners pop in, then all poof into particles -->
+          <div class="banner-stack">
+            <!-- Banner 1: big dark center banner -->
+            <div class="banner" style="left:6%; right:6%; bottom:8%; background:#0E1116; color:#FAF7F0; --tx:0; --ty:0; --rot:0deg; --px:-40px; --py:-30px; --spin:-20deg; animation-delay:0s;">
+              <div class="row">
+                <div>
+                  <p class="label">We value your privacy</p>
+                  <p class="sub">We and our 847 partners use cookies to...</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:rgba(250,247,240,0.1);">Reject</span><span class="chip" style="background:#E85A2C;">Accept all</span></div>
+              </div>
+            </div>
+
+            <!-- Banner 2: white top-left -->
+            <div class="banner" style="left:4%; top:18%; width:46%; background:#fff; color:#0E1116; border:1px solid rgba(0,0,0,0.08); --tx:0; --ty:0; --rot:-4deg; --px:-120px; --py:-80px; --spin:-35deg; animation-delay:0.15s;">
+              <div class="row">
+                <div>
+                  <p class="label">Cookies on this site</p>
+                  <p class="sub">Manage your preferences</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:#0E1116;color:#fff;">OK</span></div>
+              </div>
+            </div>
+
+            <!-- Banner 3: orange top-right -->
+            <div class="banner" style="right:6%; top:10%; width:38%; background:#E85A2C; color:#fff; --tx:0; --ty:0; --rot:5deg; --px:150px; --py:-60px; --spin:40deg; animation-delay:0.3s;">
+              <div class="row">
+                <div>
+                  <p class="label">Accept all cookies?</p>
+                  <p class="sub">For a better experience</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:rgba(255,255,255,0.2);">No</span><span class="chip" style="background:#fff;color:#E85A2C;">Yes</span></div>
+              </div>
+            </div>
+
+            <!-- Banner 4: grey mid-right -->
+            <div class="banner" style="right:10%; top:42%; width:34%; background:#2a2a2a; color:#fff; --tx:0; --ty:0; --rot:-6deg; --px:110px; --py:40px; --spin:25deg; animation-delay:0.45s;">
+              <div class="row">
+                <div>
+                  <p class="label">GDPR Consent</p>
+                  <p class="sub">Required by law</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:#E85A2C;">Agree</span></div>
+              </div>
+            </div>
+
+            <!-- Banner 5: cream bottom-left -->
+            <div class="banner" style="left:8%; bottom:22%; width:32%; background:#FAF7F0; color:#0E1116; border:1px solid rgba(0,0,0,0.08); --tx:0; --ty:0; --rot:3deg; --px:-100px; --py:70px; --spin:-50deg; animation-delay:0.6s;">
+              <div class="row">
+                <div>
+                  <p class="label">Newsletter?</p>
+                  <p class="sub">Sign up for 10% off</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:#0E1116;color:#fff;">×</span></div>
+              </div>
+            </div>
+
+            <!-- Banner 6: dark mini top-center -->
+            <div class="banner" style="left:28%; top:4%; width:26%; background:#1a1a1a; color:#fff; --tx:0; --ty:0; --rot:-2deg; --px:20px; --py:-140px; --spin:15deg; animation-delay:0.75s;">
+              <div class="row">
+                <div>
+                  <p class="label">Allow notifications?</p>
+                </div>
+                <div class="chips"><span class="chip" style="background:#E85A2C;">Allow</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Particle bits flying out when banners poof -->
+          <div class="particles">
+            <span class="particle" style="left:48%; top:60%; background:#0E1116; --px:-80px; --py:-60px; animation-delay:0s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#E85A2C; --px:70px; --py:-90px; animation-delay:0.05s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#0E1116; --px:-40px; --py:80px; animation-delay:0.1s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#E85A2C; --px:120px; --py:30px; animation-delay:0.12s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#2a2a2a; --px:-120px; --py:-20px; animation-delay:0.15s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#FAF7F0; border:1px solid #0E1116; --px:60px; --py:60px; animation-delay:0.18s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#E85A2C; --px:-60px; --py:-110px; animation-delay:0.2s;"></span>
+            <span class="particle" style="left:48%; top:60%; background:#0E1116; --px:100px; --py:-40px; animation-delay:0.22s;"></span>
+          </div>
+        </div>
+      </div>
+      <p class="mt-4 text-sm text-smoke italic">Poof. Every banner, every site, without a click.</p>
+    </div>
+  </section>
+
+  <!-- THE PROBLEM -->
+  <section id="why" class="border-t border-black/5 bg-white/60">
+    <div class="max-w-6xl mx-auto px-6 py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">The problem</p>
+      <h2 class="font-display text-4xl md:text-5xl font-semibold max-w-3xl leading-tight tracking-tight">
+        Same question. Every site. Every time.
+      </h2>
+      <p class="mt-6 text-lg text-smoke max-w-3xl leading-relaxed">
+        You've already made your choice. The web keeps pretending it doesn't know — same banner, same hidden reject button, same interruption, thousands of times a year. Clear your cookies and the whole carousel starts over. Open a different device, same thing. It's not consent anymore. It's muscle memory.
+      </p>
+
+      <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <p class="font-display text-5xl font-semibold text-ember tracking-tight">1,020</p>
+          <p class="mt-3 text-sm text-smoke leading-relaxed">Cookie banners the average internet user clicks through in a year. Every one of them asks a question you've already answered.</p>
+        </div>
+        <div>
+          <p class="font-display text-5xl font-semibold text-ember tracking-tight">76%</p>
+          <p class="mt-3 text-sm text-smoke leading-relaxed">Of users who dismiss the banner without reading it — usually by tapping "Accept all" just to make it stop. That's not consent. That's exhaustion.</p>
+        </div>
+        <div>
+          <p class="font-display text-5xl font-semibold text-ember tracking-tight">72%</p>
+          <p class="mt-3 text-sm text-smoke leading-relaxed">Of cookie banners use dark patterns — reject hidden, accept pre-selected, layouts designed to tire you into saying yes.</p>
+        </div>
+      </div>
+
+      <p class="mt-10 font-mono text-xs text-smoke/70 tracking-wide">
+        Data: Advance Metrics (2023); Nouwens et al., CHI 2020; European Commission behavioural study, 2022.
+      </p>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="max-w-6xl mx-auto px-6 py-24">
+    <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">How it works</p>
+    <h2 class="font-display text-4xl md:text-5xl font-semibold max-w-3xl leading-tight tracking-tight">
+      One preference. Every site. Done.
+    </h2>
+
+    <div class="mt-14 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="rounded-2xl border border-black/5 bg-white p-8 hover:shadow-md transition-shadow">
+        <div class="h-10 w-10 rounded-full bg-ink text-cream flex items-center justify-center font-display text-base font-semibold mb-6">1</div>
+        <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Install once</h3>
+        <p class="text-smoke leading-relaxed">Add BannerBye to your browser. Pick what you share, what you don't. Takes about ten seconds.</p>
+      </div>
+      <div class="rounded-2xl border border-black/5 bg-white p-8 hover:shadow-md transition-shadow">
+        <div class="h-10 w-10 rounded-full bg-ink text-cream flex items-center justify-center font-display text-base font-semibold mb-6">2</div>
+        <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Browse anywhere</h3>
+        <p class="text-smoke leading-relaxed">Banners disappear before they render. No flash, no click, no dark pattern. Just the page you came for.</p>
+      </div>
+      <div class="rounded-2xl border border-black/5 bg-white p-8 hover:shadow-md transition-shadow">
+        <div class="h-10 w-10 rounded-full bg-ink text-cream flex items-center justify-center font-display text-base font-semibold mb-6">3</div>
+        <h3 class="font-display text-2xl font-semibold mb-3 tracking-tight">Stay private</h3>
+        <p class="text-smoke leading-relaxed">Your preference lives on your device. Not in our cloud. Not in anyone's analytics. Open source, auditable, yours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFFERENTIATORS -->
+  <section class="border-t border-black/5 bg-cream">
+    <div class="max-w-6xl mx-auto px-6 py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">What makes it different</p>
+      <h2 class="font-display text-4xl md:text-5xl font-semibold max-w-3xl leading-tight tracking-tight">
+        Not another click-hider. A new default.
+      </h2>
+
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 max-w-4xl">
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-ember text-xl">→</span>
+            <h3 class="font-display text-xl font-semibold tracking-tight">Legal, not loud</h3>
+          </div>
+          <p class="text-smoke leading-relaxed">We send the signals regulators wrote into law. Sites have to listen. No clever hacks that break next week.</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-ember text-xl">→</span>
+            <h3 class="font-display text-xl font-semibold tracking-tight">Open by default</h3>
+          </div>
+          <p class="text-smoke leading-relaxed">Every rule, every line of code, public on GitHub. If you don't trust it, fork it.</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-ember text-xl">→</span>
+            <h3 class="font-display text-xl font-semibold tracking-tight">Zero tracking</h3>
+          </div>
+          <p class="text-smoke leading-relaxed">We don't know which sites you visit. We can't. The extension never phones home with your browsing.</p>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <span class="text-ember text-xl">→</span>
+            <h3 class="font-display text-xl font-semibold tracking-tight">Everywhere you are</h3>
+          </div>
+          <p class="text-smoke leading-relaxed">Chrome and Firefox on desktop, Safari on iPhone and iPad. One preference, every screen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section class="border-t border-black/5 bg-white/60">
+    <div class="max-w-6xl mx-auto px-6 py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">The alternatives</p>
+      <h2 class="font-display text-4xl md:text-5xl font-semibold max-w-3xl leading-tight tracking-tight">
+        Most banner tools hide.<br/>BannerBye refuses.
+      </h2>
+      <p class="mt-6 text-lg text-smoke max-w-3xl leading-relaxed">
+        The others dismiss the banner after it already reached you. BannerBye works one step earlier — it tells the site you've already said no, so the banner never loads at all.
+      </p>
+
+      <div class="mt-12 overflow-x-auto">
+        <table class="w-full min-w-[760px] border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th class="py-5 pr-6 align-bottom"></th>
+              <th class="py-5 px-5 font-display text-base font-semibold tracking-tight bg-ember/5 border-t-2 border-ember align-bottom">
+                <span class="text-ink">Banner</span><span class="text-ember">Bye</span>
+              </th>
+              <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Consent-O-Matic</th>
+              <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">I don't care about cookies</th>
+              <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Super Agent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-black/10">
+              <td class="py-5 pr-6 font-medium text-ink">How it works</td>
+              <td class="py-5 px-5 bg-ember/5 text-ink font-semibold">Prevents banner</td>
+              <td class="py-5 px-5 text-smoke">Auto-clicks</td>
+              <td class="py-5 px-5 text-smoke">Hides with CSS</td>
+              <td class="py-5 px-5 text-smoke">Auto-clicks</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">Sends legal GPC signal</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">Open source &amp; auditable</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
+              <td class="py-5 px-5 text-smoke">Partial</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">Zero telemetry</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">One preference, every browser</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke">Partial</td>
+              <td class="py-5 px-5 text-smoke">Partial</td>
+              <td class="py-5 px-5 text-smoke">Partial</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-5 pr-6 font-medium text-ink">Free, no account</td>
+              <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="mt-8 font-mono text-xs text-smoke/70 tracking-wide">
+        Based on publicly available extension documentation and source code, April 2026.
+      </p>
+    </div>
+  </section>
+
+  <!-- GET IT -->
+  <section id="get" class="relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-6 py-28">
+      <div class="rounded-3xl bg-ink text-cream p-10 md:p-16 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-ember/20 blur-3xl"></div>
+        <div class="relative">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-cream/60 mb-6">Get BannerBye</p>
+          <h2 class="font-display text-4xl md:text-5xl font-semibold leading-tight tracking-tight max-w-2xl">
+            Bye bye<br />cookie banners.
+          </h2>
+          <p class="mt-6 text-lg text-cream/70 leading-relaxed max-w-2xl">
+            Add it to your browser. Set your privacy once. Then forget cookie banners exist.
+          </p>
+
+          <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+            <!-- Chrome -->
+            <a href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-6 transition-colors flex flex-col">
+              <p class="font-display text-xl font-semibold tracking-tight">Chrome</p>
+              <p class="text-sm text-cream/50 mt-1 leading-relaxed">Free. Also works on Edge &amp; Brave.</p>
+              <span class="mt-4 inline-flex items-center text-ember text-sm font-medium group-hover:translate-x-0.5 transition-transform">Add to Chrome →</span>
+            </a>
+            <!-- Firefox -->
+            <a href="https://addons.mozilla.org/firefox/addon/bannerbye/" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-6 transition-colors flex flex-col">
+              <p class="font-display text-xl font-semibold tracking-tight">Firefox</p>
+              <p class="text-sm text-cream/50 mt-1 leading-relaxed">Free. Reviewed by Mozilla.</p>
+              <span class="mt-4 inline-flex items-center text-ember text-sm font-medium group-hover:translate-x-0.5 transition-transform">Add to Firefox →</span>
+            </a>
+            <!-- Safari / iOS App Store -->
+            <a href="https://apps.apple.com/app/id6771131989" target="_blank" rel="noopener"
+               class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-6 transition-colors flex flex-col">
+              <p class="font-display text-xl font-semibold tracking-tight">Safari</p>
+              <p class="text-sm text-cream/50 mt-1 leading-relaxed">€1.99 · iPhone &amp; iPad.</p>
+              <span class="mt-4 inline-flex items-center text-ember text-sm font-medium group-hover:translate-x-0.5 transition-transform">Download on App Store →</span>
+            </a>
+          </div>
+
+          <p class="mt-10 text-xs text-cream/40">No account. No tracking. Free on Chrome and Firefox.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-black/5">
+    <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-sm text-smoke">
+      <div class="flex items-center gap-2">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z"
+                stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+          <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+          <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+          <path d="M30 58 L 46 72 L 76 40"
+                stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="font-display text-base font-semibold text-ink tracking-tight">
+          Banner<span class="text-ember">Bye</span>
+        </span>
+        <span class="text-smoke ml-2">© 2026</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="/privacy" class="hover:text-ink transition">Privacy</a>
+        <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener" class="hover:text-ink transition">Open source</a>
+        <a href="mailto:hello@bannerbye.com" class="hover:text-ink transition">hello@bannerbye.com</a>
+      </div>
+    </div>
+    <p class="max-w-6xl mx-auto px-6 pb-10 text-xs text-smoke/70">
+      Made in Brainport.
+    </p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — BannerBye</title>
+  <meta name="robots" content="noindex" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAFAF7',
+            ink: '#141414',
+            smoke: '#6B6B68',
+            ember: '#FF5A1F',
+            emberdark: '#E84A10'
+          },
+          fontFamily: {
+            display: ['"Fraunces"', 'Georgia', 'serif'],
+            sans: ['"Inter"', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-display { font-family: 'Fraunces', Georgia, serif; letter-spacing: -0.02em; }
+  </style>
+</head>
+<body class="bg-cream text-ink antialiased min-h-screen flex items-center justify-center px-6">
+  <div class="max-w-xl text-center">
+    <p class="text-sm uppercase tracking-[0.2em] text-smoke mb-6">404</p>
+    <h1 class="font-display text-5xl md:text-6xl font-semibold leading-[0.95]">
+      This page<br />said bye already.
+    </h1>
+    <p class="mt-6 text-lg text-smoke leading-relaxed">
+      The URL you're after doesn't exist — or it left as quietly as a cookie banner should.
+    </p>
+    <a href="/" class="mt-10 inline-flex items-center rounded-full bg-ember hover:bg-emberdark text-white font-medium px-6 py-3 transition-colors">
+      Back to BannerBye
+      <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10h12M12 6l4 4-4 4"/></svg>
+    </a>
+  </div>
+</body>
+</html>

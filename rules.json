@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "updatedAt": "2026-05-06T00:00:00Z",
+  "autoclick": {
+    "rejectKeywords": [],
+    "ambiguousKeywords": [],
+    "stepIntoKeywords": []
+  }
+}

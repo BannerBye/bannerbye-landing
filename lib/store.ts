@@ -1,0 +1,268 @@
+/**
+ * BannerBye — report storage helper (Phase 2A, v0.3.0)
+ *
+ * Persisteert inkomende "Report broken site"-meldingen in Upstash Redis,
+ * zodat /api/reports + de /admin-pagina ze kunnen tonen en aggregeren.
+ *
+ * Storage is BEST-EFFORT: als Redis niet is geconfigureerd of faalt, mag
+ * dat NOOIT de /api/report-flow breken (mail blijft de bron-van-waarheid).
+ *
+ * Env-vars (Redis.fromEnv pakt beide naming-conventies automatisch op):
+ *   - KV_REST_API_URL        / KV_REST_API_TOKEN         (Vercel-integratie)
+ *   - UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN  (Upstash direct)
+ *
+ * Datamodel (alle keys geprefixed met bb:):
+ *   bb:report:{id}          STRING(JSON)  een losse melding, TTL 180d
+ *   bb:reports              ZSET          globale index, score=ts, member=id
+ *   bb:host:reports:{host}  ZSET          per-host index, score=ts, member=id
+ *   bb:hosts                ZSET          host-ranking, score=count, member=host
+ *   bb:host:meta:{host}     HASH          {lastTs,lastVersion,lastMessage}
+ */
+
+import { Redis } from '@upstash/redis';
+
+export interface StoredReport {
+  id: string;
+  hostname: string;
+  version: string;
+  ip: string;
+  ua: string;
+  message: string;
+  ts: number;
+}
+
+export interface HostSummary {
+  hostname: string;
+  count: number;
+  lastTs: number;
+  lastVersion: string;
+}
+
+// Bewaartermijn van een losse melding. Index-ZSETs leven door, maar de
+// detail-records vervallen na 180 dagen om storage klein te houden.
+const REPORT_TTL_SECONDS = 180 * 24 * 60 * 60;
+
+let cached: Redis | null | undefined;
+
+/** Lazy singleton. Geeft null als de env-vars ontbreken (graceful degrade). */
+export function getRedis(): Redis | null {
+  if (cached !== undefined) return cached;
+  const hasVercel =
+    !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
+  const hasUpstash =
+    !!process.env.UPSTASH_REDIS_REST_URL &&
+    !!process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!hasVercel && !hasUpstash) {
+    cached = null;
+    return cached;
+  }
+  try {
+    cached = Redis.fromEnv();
+  } catch (err) {
+    console.error('[store] Redis.fromEnv failed:', err);
+    cached = null;
+  }
+  return cached;
+}
+
+/** Of persistentie überhaupt actief is (env aanwezig). */
+export function storageEnabled(): boolean {
+  return getRedis() !== null;
+}
+
+function newId(ts: number): string {
+  const rand = Math.random().toString(36).slice(2, 8);
+  return `${ts}-${rand}`;
+}
+
+/**
+ * Persisteer één melding. Best-effort: gooit nooit — logt en returnt false
+ * bij falen zodat de caller de request niet hoeft te laten klappen.
+ */
+export async function persistReport(
+  input: Omit<StoredReport, 'id'>,
+): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis) return false;
+  const id = newId(input.ts);
+  const record: StoredReport = { id, ...input };
+  try {
+    const p = redis.pipeline();
+    p.set(`bb:report:${id}`, record, { ex: REPORT_TTL_SECONDS });
+    p.zadd('bb:reports', { score: input.ts, member: id });
+    p.zadd(`bb:host:reports:${input.hostname}`, {
+      score: input.ts,
+      member: id,
+    });
+    p.expire(`bb:host:reports:${input.hostname}`, REPORT_TTL_SECONDS);
+    p.zincrby('bb:hosts', 1, input.hostname);
+    p.hset(`bb:host:meta:${input.hostname}`, {
+      lastTs: input.ts,
+      lastVersion: input.version,
+      lastMessage: input.message || '',
+    });
+    await p.exec();
+    return true;
+  } catch (err) {
+    console.error('[store] persistReport failed:', err);
+    return false;
+  }
+}
+
+/**
+ * Lijst meldingen, nieuwste eerst. Filter optioneel op hostname.
+ */
+export async function listReports(opts: {
+  hostname?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<StoredReport[]> {
+  const redis = getRedis();
+  if (!redis) return [];
+  const limit = Math.min(Math.max(opts.limit ?? 100, 1), 500);
+  const offset = Math.max(opts.offset ?? 0, 0);
+  const indexKey = opts.hostname
+    ? `bb:host:reports:${opts.hostname}`
+    : 'bb:reports';
+  try {
+    const ids = (await redis.zrange(
+      indexKey,
+      offset,
+      offset + limit - 1,
+      { rev: true },
+    )) as string[];
+    if (!ids.length) return [];
+    const keys = ids.map((id) => `bb:report:${id}`);
+    const records = (await redis.mget<StoredReport[]>(...keys)) ?? [];
+    // mget kan null bevatten voor verlopen records — filter die eruit.
+    return records.filter((r): r is StoredReport => !!r && typeof r === 'object');
+  } catch (err) {
+    console.error('[store] listReports failed:', err);
+    return [];
+  }
+}
+
+/**
+ * Geaggregeerde host-ranking, hoogste count eerst, met meta erbij.
+ */
+export async function listHostSummary(opts: {
+  limit?: number;
+}): Promise<HostSummary[]> {
+  const redis = getRedis();
+  if (!redis) return [];
+  const limit = Math.min(Math.max(opts.limit ?? 100, 1), 500);
+  try {
+    const flat = (await redis.zrange('bb:hosts', 0, limit - 1, {
+      rev: true,
+      withScores: true,
+    })) as (string | number)[];
+    const hosts: { hostname: string; count: number }[] = [];
+    for (let i = 0; i < flat.length; i += 2) {
+      hosts.push({
+        hostname: String(flat[i]),
+        count: Number(flat[i + 1]),
+      });
+    }
+    if (!hosts.length) return [];
+    // Haal meta per host op (pipeline van hgetalls).
+    const p = redis.pipeline();
+    hosts.forEach((h) => p.hgetall(`bb:host:meta:${h.hostname}`));
+    const metas = (await p.exec()) as (Record<string, unknown> | null)[];
+    return hosts.map((h, i) => {
+      const m = metas[i] ?? {};
+      return {
+        hostname: h.hostname,
+        count: h.count,
+        lastTs: Number(m?.['lastTs'] ?? 0),
+        lastVersion: String(m?.['lastVersion'] ?? ''),
+      };
+    });
+  } catch (err) {
+    console.error('[store] listHostSummary failed:', err);
+    return [];
+  }
+}
+
+/**
+ * Verwijder ALLE meldingen van één host + alle bijbehorende indexen/meta.
+ * Geeft het aantal verwijderde meldingen terug.
+ */
+export async function deleteHost(hostname: string): Promise<number> {
+  const redis = getRedis();
+  if (!redis) return 0;
+  try {
+    const ids = (await redis.zrange(
+      `bb:host:reports:${hostname}`,
+      0,
+      -1,
+    )) as string[];
+    const p = redis.pipeline();
+    if (ids.length) {
+      ids.forEach((id) => p.del(`bb:report:${id}`));
+      p.zrem('bb:reports', ...ids);
+    }
+    p.del(`bb:host:reports:${hostname}`);
+    p.zrem('bb:hosts', hostname);
+    p.del(`bb:host:meta:${hostname}`);
+    await p.exec();
+    return ids.length;
+  } catch (err) {
+    console.error('[store] deleteHost failed:', err);
+    return 0;
+  }
+}
+
+/**
+ * Verwijder één losse melding. Werkt de host-teller bij en ruimt de host
+ * volledig op als dit zijn laatste melding was. hostname is vereist zodat we
+ * geen extra read hoeven te doen (de admin-UI heeft 'm al).
+ */
+export async function deleteReport(
+  id: string,
+  hostname: string,
+): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis) return false;
+  try {
+    const p = redis.pipeline();
+    p.del(`bb:report:${id}`);
+    p.zrem('bb:reports', id);
+    p.zrem(`bb:host:reports:${hostname}`, id);
+    await p.exec();
+    // Werk de host-ranking bij; ruim host op als die op 0 staat.
+    const remaining = await redis.zincrby('bb:hosts', -1, hostname);
+    if (Number(remaining) <= 0) {
+      const cleanup = redis.pipeline();
+      cleanup.zrem('bb:hosts', hostname);
+      cleanup.del(`bb:host:meta:${hostname}`);
+      cleanup.del(`bb:host:reports:${hostname}`);
+      await cleanup.exec();
+    }
+    return true;
+  } catch (err) {
+    console.error('[store] deleteReport failed:', err);
+    return false;
+  }
+}
+
+/** Totale tellingen voor de dashboard-header. */
+export async function getStats(): Promise<{
+  totalReports: number;
+  totalHosts: number;
+}> {
+  const redis = getRedis();
+  if (!redis) return { totalReports: 0, totalHosts: 0 };
+  try {
+    const p = redis.pipeline();
+    p.zcard('bb:reports');
+    p.zcard('bb:hosts');
+    const [totalReports, totalHosts] = (await p.exec()) as [number, number];
+    return {
+      totalReports: Number(totalReports ?? 0),
+      totalHosts: Number(totalHosts ?? 0),
+    };
+  } catch (err) {
+    console.error('[store] getStats failed:', err);
+    return { totalReports: 0, totalHosts: 0 };
+  }
+}
