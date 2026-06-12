@@ -56,7 +56,7 @@
       BannerBye exists to keep cookie banners away from you. It would be a poor product if it tracked you while doing it. So it doesn't. This page explains exactly what the extension does, what it doesn't, and where the data lives.
     </p>
 
-    <p class="mt-8 text-sm font-mono text-smoke">Last updated: 6 June 2026</p>
+    <p class="mt-8 text-sm font-mono text-smoke">Last updated: 12 June 2026</p>
 
     <article class="prose-bb mt-12 text-base text-ink/90">
 
@@ -126,6 +126,31 @@
         <li>It does not sell, share, or rent any data, because there is no data to sell, share, or rent.</li>
         <li>It does not contain third-party advertising or tracking SDKs.</li>
       </ul>
+
+      <h2>Why does Safari say BannerBye can read passwords?</h2>
+      <p>
+        When you install BannerBye on Safari (Mac or iOS), Apple shows a permission dialog warning that the extension can read <em>"sensitive information on web pages, including passwords, phone numbers, and credit cards, and your browsing history on the current tab's web page when you use the extension."</em>
+      </p>
+      <p>
+        This text is identical for every Safari extension that accesses page content. It is not specific to BannerBye, and it tells you what the extension is <em>technically capable of</em>, not what it actually does. Chrome and Firefox show similar warnings for the same reason.
+      </p>
+      <p><strong>What BannerBye actually does on every page:</strong></p>
+      <ul>
+        <li>Reads the page's DOM (HTML structure) to detect cookie banners.</li>
+        <li>Sends a "no consent" signal via web standards (GPC, IAB TCF).</li>
+        <li>Auto-clicks "Reject all" on custom consent UIs.</li>
+      </ul>
+      <p><strong>What BannerBye does <em>not</em> do:</strong></p>
+      <ul>
+        <li>Read passwords, credit cards, or phone numbers.</li>
+        <li>Read or store your browsing history.</li>
+        <li>Send anything to our servers, except hostname when you tap "Report broken site" — see the section above.</li>
+        <li>Track you across sites or build user profiles.</li>
+        <li>Run analytics, telemetry, or crash reporting.</li>
+      </ul>
+      <p>
+        You don't have to trust this page. The full source code is open and auditable on GitHub: <a href="https://github.com/BannerBye/BannerBye">github.com/BannerBye/BannerBye</a> (MIT license). Search the codebase for "password" or "credit-card" yourself — you won't find any reference to reading those.
+      </p>
 
       <h2>Permissions explained</h2>
       <p>
