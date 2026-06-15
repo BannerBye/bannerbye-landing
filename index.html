@@ -485,6 +485,106 @@
     </div>
   </section>
 
+  <!-- FAQ -->
+  <section id="faq" class="border-t border-black/5 bg-cream">
+    <div class="max-w-3xl mx-auto px-6 py-24">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-4">Questions</p>
+      <h2 class="font-display text-4xl md:text-5xl font-semibold leading-tight tracking-tight">
+        Things you might wonder.
+      </h2>
+
+      <style>
+        #faq details > summary { list-style: none; }
+        #faq details > summary::-webkit-details-marker { display: none; }
+        #faq details > summary .faq-icon { transition: transform 0.2s ease; }
+        #faq details[open] > summary .faq-icon { transform: rotate(45deg); }
+      </style>
+
+      <div class="mt-12 border-t border-black/10">
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">My browser already has privacy settings. Why do I need BannerBye?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>Browsers can block <em>cookies</em>, but cookie banners are the prompts asking for consent — not the cookies themselves. Block cookies and you'll still see 50 banners a day.</p>
+            <p class="mt-3">Firefox has a "Cookie Banner Reduction" feature, but it only covers a small list of sites in Strict mode. Chrome and Safari have nothing built in. "Do Not Track" is a deprecated header that virtually no site respects anymore.</p>
+            <p class="mt-3">BannerBye works on every site through three legally recognised signals: the GPC header, the IAB TCF reject string, and a pattern-based auto-click for custom banners. The banner never renders in the first place.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Does BannerBye see what websites I visit?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>No. The extension reads the page in your browser only to find cookie banners. Nothing is sent to our servers — except the hostname when you tap "Report broken site," and only then.</p>
+            <p class="mt-3">The full source code is open and auditable on GitHub: <a href="https://github.com/BannerBye/BannerBye" class="text-ember underline underline-offset-2 hover:text-emberdark">github.com/BannerBye/BannerBye</a>. Search the repo for "tracker" or "analytics" — you won't find any.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Will it work on every website?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>It handles the vast majority of cookie banners through three independent layers: GPC (legally binding in several US states), IAB TCF reject (used by most major European publishers), and a pattern-based auto-click for custom banners.</p>
+            <p class="mt-3">For the rare site where it doesn't work, one tap on "Report broken site" in the popup tells us. Our daily-updated rule list reaches every user within hours — no extension update needed.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">What is GPC?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>Global Privacy Control. A web standard that tells every site you visit: "I do not consent to the sale or sharing of my data." It's legally binding in California, Connecticut, and Colorado, and increasingly enforced across the EU.</p>
+            <p class="mt-3">BannerBye adds the GPC header to every outgoing request your browser makes. You set your preference once. No clicks needed.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Is it really free?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>Yes. Free, no account, no ads, no upsell. The extension is MIT-licensed open source.</p>
+            <p class="mt-3">If we ever introduce paid features, the core (killing cookie banners on every site) will always stay free.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Does it work on mobile?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>iPhone and iPad: yes, via Safari (App Store). Android: yes on Firefox via the Mozilla add-on. Chrome for Android doesn't support extensions — that's a Google limitation, not ours.</p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Why does Safari say BannerBye can read my passwords?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>That's Apple's standard warning for every Safari extension that needs access to page content. It describes what the extension is <em>technically capable of</em>, not what BannerBye actually does. Chrome and Firefox show similar warnings for the same reason.</p>
+            <p class="mt-3">BannerBye reads the page structure to find cookie banners and clicks "Reject all." It does not read passwords, credit cards, or browsing history. Full breakdown on the <a href="/privacy" class="text-ember underline underline-offset-2 hover:text-emberdark">privacy page</a>.</p>
+          </div>
+        </details>
+      </div>
+
+      <p class="mt-10 text-sm text-smoke">
+        Still wondering? Email <a href="mailto:hello@bannerbye.com" class="text-ember underline underline-offset-2 hover:text-emberdark">hello@bannerbye.com</a>.
+      </p>
+    </div>
+  </section>
+
   <!-- GET IT -->
   <section id="get" class="relative overflow-hidden">
     <div class="max-w-6xl mx-auto px-6 py-28">
