@@ -65,7 +65,9 @@ export default async function handler(
     return;
   }
 
-  const expected = process.env.ADMIN_TOKEN;
+  // .trim() op expected: Vercel UI plakte soms trailing whitespace/newline mee
+  // in de env-var, wat een length-mismatch in safeEqual triggerde → 401.
+  const expected = (process.env.ADMIN_TOKEN || '').trim();
   if (!expected) {
     console.error('[api/reports] ADMIN_TOKEN not configured');
     res.status(503).json({ error: 'Admin endpoint not configured' });
