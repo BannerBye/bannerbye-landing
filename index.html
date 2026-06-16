@@ -515,6 +515,25 @@
 
         <details class="border-b border-black/10">
           <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Doesn't Safari already block this with Private Browsing or "Block pop-ups"?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>No. Safari's built-in privacy features are <em>defensive</em> — they limit cookies, hide trackers, and wipe history. None of them prevent cookie banners from appearing.</p>
+            <ul class="mt-4 space-y-2 list-disc pl-5">
+              <li><strong>Private Browsing</strong> wipes cookies after you close the tab, but you still see every banner while browsing.</li>
+              <li><strong>Block pop-ups</strong> stops JavaScript pop-up windows. Cookie banners are overlay-modals <em>inside</em> the page — different beast.</li>
+              <li><strong>Prevent Cross-Site Tracking</strong> limits how sites follow you, but doesn't change what they ask you.</li>
+              <li><strong>Block All Cookies</strong> doesn't hide banners; sites still display them. And many sites break (no login, no cart).</li>
+              <li><strong>Hide Distracting Items</strong> (iOS 18+) lets you manually hide a banner per site, but Safari doesn't tell the site you said no — which leaves a legal gray area.</li>
+            </ul>
+            <p class="mt-4">BannerBye works one level above all of this. It sends a legal "no" via GPC and IAB TCF <em>before</em> the page renders. The banner never has to appear, and the site knows your answer.</p>
+            <p class="mt-3"><strong>Safari makes tracking harder. BannerBye makes the asking stop.</strong></p>
+          </div>
+        </details>
+
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
             <span class="font-display text-lg md:text-xl font-semibold tracking-tight pr-4">Does BannerBye see what websites I visit?</span>
             <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
           </summary>
