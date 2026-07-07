@@ -17,7 +17,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { persistReport } from '../lib/store.js';
+import { persistReport, addWatcher } from '../lib/store.js';
 
 // We gebruiken Resend's REST API direct via fetch — geen SDK-dependency.
 // Reden: resend@4.x is ESM-only en geeft FUNCTION_INVOCATION_FAILED in
@@ -27,6 +27,56 @@ const RESEND_API_ENDPOINT = 'https://api.resend.com/emails';
 
 const REPORT_TO = 'hello@bannerbye.com';
 const REPORT_FROM = 'BannerBye Reports <hello@bannerbye.com>';
+
+// De analyzer-workflow draait in de extensie-repo. Bij elke geldige melding
+// vuren we daar een repository_dispatch af, zodat de AI meteen aan de slag gaat
+// i.p.v. te wachten op een dagschema. Token = env GH_DISPATCH_TOKEN (scope: bij
+// een classic PAT `repo`; bij een fine-grained PAT read/write op "Contents").
+const GH_DISPATCH_REPO = process.env.GH_DISPATCH_REPO || 'BannerBye/BannerBye';
+
+/**
+ * Trigger de analyzer meteen via GitHub repository_dispatch. Best-effort met
+ * korte timeout — een fout hier mag de melding NOOIT laten klappen.
+ */
+async function triggerAnalysis(hostname: string): Promise<void> {
+  const token = process.env.GH_DISPATCH_TOKEN;
+  if (!token) {
+    console.warn('[api/report] GH_DISPATCH_TOKEN ontbreekt — sla trigger over.');
+    return;
+  }
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const resp = await fetch(
+      `https://api.github.com/repos/${GH_DISPATCH_REPO}/dispatches`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          'Content-Type': 'application/json',
+          'User-Agent': 'bannerbye-report',
+        },
+        body: JSON.stringify({
+          event_type: 'report-submitted',
+          client_payload: { hostname },
+        }),
+        signal: controller.signal,
+      },
+    );
+    clearTimeout(timer);
+    if (!resp.ok) {
+      console.error(
+        '[api/report] dispatch HTTP',
+        resp.status,
+        (await resp.text()).slice(0, 200),
+      );
+    }
+  } catch (err) {
+    console.error('[api/report] dispatch failed:', err);
+  }
+}
 
 // Rate-limit: max 5 reports per IP per uur.
 const RATE_LIMIT_MAX = 5;
@@ -63,6 +113,15 @@ function record(map: Map<string, number[]>, key: string, now: number): void {
 function sanitize(value: unknown, maxLen: number): string {
   if (typeof value !== 'string') return '';
   return value.slice(0, maxLen).replace(/[\x00-\x1F\x7F]/g, '').trim();
+}
+
+/** Optioneel opt-in e-mailadres. Tolerant, alleen om onzin te weren. */
+function validEmail(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim().toLowerCase();
+  if (!trimmed || trimmed.length > 254) return null;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return null;
+  return trimmed;
 }
 
 /** Strip aria/host to plausible hostname. Geen pad of querystring toegestaan. */
@@ -110,10 +169,12 @@ export default async function handler(
     hostname?: unknown;
     version?: unknown;
     message?: unknown;
+    email?: unknown;
   };
   const hostname = validHostname(body.hostname);
   const version = sanitize(body.version, 32);
   const message = sanitize(body.message, 2000);
+  const email = validEmail(body.email); // null = geen/ongeldig = anoniem
 
   if (!hostname) {
     res.status(400).json({ error: 'Invalid hostname' });
@@ -145,6 +206,7 @@ export default async function handler(
       `IP:       ${ip}`,
       `UA:       ${userAgent}`,
       `Time:     ${new Date(now).toISOString()}`,
+      `Notify:   ${email ? `${email} (opted in — will be emailed when fixed)` : 'no (anonymous)'}`,
       ``,
       `--- User message ---`,
       message || '(no additional context)',
@@ -195,6 +257,16 @@ export default async function handler(
     message,
     ts: now,
   });
+
+  // Phase 2C (#reward-3): opt-in "email me when fixed". Best-effort; een fout
+  // hier mag de melding nooit laten klappen. Alleen bij een geldig adres.
+  if (email) {
+    await addWatcher(hostname, email);
+  }
+
+  // Meteen de analyzer aftrappen (i.p.v. dagschema). Best-effort en vóór de
+  // response, want een serverless function kan na res.json() bevriezen.
+  await triggerAnalysis(hostname);
 
   res.status(200).json({ ok: true });
 }

@@ -110,9 +110,13 @@
         <li>Your browser's <strong>User-Agent string</strong> — the same one every website you visit already receives with every request.</li>
         <li>Your <strong>IP address</strong> — automatically attached by your network connection, as with any HTTP request.</li>
         <li>Any <strong>additional context</strong> you typed into the optional textarea.</li>
+        <li>An <strong>email address</strong> — <em>only</em> if you choose to fill in the optional "Email me when it's fixed" field. Leave it blank and your report stays fully anonymous.</li>
       </ul>
       <p>
         Reports land in our private inbox (<code>hello@bannerbye.com</code>) and are stored in our own private database (Upstash Redis) so we can see which sites are reported most often. We use them only to find and fix sites where BannerBye stops working. Stored reports are kept for at most <strong>180 days</strong> and then automatically deleted; they are not shared with anyone and not joined with any other data. Each IP can submit up to five reports per hour to prevent abuse.
+      </p>
+      <p>
+        If you provide an email address, we use it for one purpose only: to send you a single message when the site you reported is handled. We do not add you to any list, we send nothing else, and we delete the address as soon as that one email goes out (or automatically within 180 days if no fix ships). Providing it is entirely optional.
       </p>
       <p>
         This is a <strong>one-tap user action</strong>, not background telemetry. The extension does not contact <code>/api/report</code> in any other circumstance.

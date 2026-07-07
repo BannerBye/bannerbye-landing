@@ -245,6 +245,71 @@ export async function deleteReport(
   }
 }
 
+/**
+ * v0.3.0 (#reward-3): opt-in "email me when fixed".
+ * Sla het e-mailadres van een melder op in een per-host SET, zodat de analyzer
+ * later één seintje kan sturen zodra de host is opgelost. Best-effort — gooit
+ * nooit. TTL gelijk aan de report-bewaartermijn (180d) zodat oude watchers
+ * vanzelf verlopen als er nooit een fix komt.
+ */
+export async function addWatcher(
+  hostname: string,
+  email: string,
+): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis) return false;
+  try {
+    const key = `bb:host:watchers:${hostname}`;
+    await redis.sadd(key, email);
+    await redis.expire(key, REPORT_TTL_SECONDS);
+    return true;
+  } catch (err) {
+    console.error('[store] addWatcher failed:', err);
+    return false;
+  }
+}
+
+export interface FixedEntry {
+  hostname: string;
+  keyword: string;
+  list: string;
+  fixedAt: number;
+}
+
+/**
+ * v0.3.0 (#reward-2): lees de recent opgeloste hosts voor de publieke
+ * /fixed-changelog. Bron = bb:fixed ZSET (score=fixedAt) + per-host meta.
+ * Geeft NOOIT persoonlijke data terug — alleen hostname + keyword + datum.
+ */
+export async function listFixed(opts: {
+  limit?: number;
+}): Promise<FixedEntry[]> {
+  const redis = getRedis();
+  if (!redis) return [];
+  const limit = Math.min(Math.max(opts.limit ?? 100, 1), 500);
+  try {
+    const hosts = (await redis.zrange('bb:fixed', 0, limit - 1, {
+      rev: true,
+    })) as string[];
+    if (!hosts.length) return [];
+    const p = redis.pipeline();
+    hosts.forEach((h) => p.get(`bb:fixed:meta:${h}`));
+    const metas = (await p.exec()) as (FixedEntry | null)[];
+    return hosts.map((h, i) => {
+      const m = metas[i];
+      return {
+        hostname: h,
+        keyword: m?.keyword ?? '',
+        list: m?.list ?? '',
+        fixedAt: Number(m?.fixedAt ?? 0),
+      };
+    });
+  } catch (err) {
+    console.error('[store] listFixed failed:', err);
+    return [];
+  }
+}
+
 /** Totale tellingen voor de dashboard-header. */
 export async function getStats(): Promise<{
   totalReports: number;

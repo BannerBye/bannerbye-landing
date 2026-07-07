@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye — Recently killed</title>
+  <meta name="description" content="Cookie banners recently killed by BannerBye — reported by someone, now handled for everyone." />
+  <meta property="og:title" content="BannerBye — Recently killed" />
+  <meta property="og:description" content="Every banner on this page was reported by someone. Now it's handled for everyone." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/fixed" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --cream: #FAF7F0;
+      --ink: #0E1116;
+      --ember: #E85A2C;
+      --smoke: #6B6F76;
+      --line: rgba(14, 17, 22, 0.10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+    .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.025em; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+
+    a.back { color: var(--smoke); text-decoration: none; font-size: 13px; }
+    a.back:hover { color: var(--ink); }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--ember); margin: 28px 0 10px;
+    }
+    h1 { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700;
+      font-size: clamp(30px, 6vw, 46px); letter-spacing: -0.03em; line-height: 1.05; margin: 0 0 14px; }
+    .lede { font-size: 17px; line-height: 1.6; color: var(--smoke); max-width: 46ch; margin: 0 0 8px; }
+
+    .count { margin: 34px 0 12px; font-size: 13px; color: var(--smoke); }
+    .count strong { color: var(--ink); }
+
+    ul.feed { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+    li.row {
+      display: flex; align-items: baseline; gap: 14px;
+      padding: 16px 4px; border-bottom: 1px solid var(--line);
+    }
+    li.row .check { color: var(--ember); font-weight: 700; flex-shrink: 0; }
+    li.row .host { font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--ink); word-break: break-all; }
+    li.row .meta { margin-left: auto; text-align: right; flex-shrink: 0; }
+    li.row .date { font-size: 12px; color: var(--smoke); white-space: nowrap; }
+
+    .state { padding: 40px 4px; color: var(--smoke); font-size: 15px; line-height: 1.6; }
+    .foot { margin-top: 44px; font-size: 13px; color: var(--smoke); line-height: 1.6; }
+    .foot a { color: var(--ember); text-decoration: none; }
+    .foot a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="back" href="/">← BannerBye</a>
+    <p class="eyebrow">Recently killed</p>
+    <h1 class="font-display">Banners that don't stand a chance anymore.</h1>
+    <p class="lede">Every site below was reported by someone. BannerBye's AI reviewed it and now handles it — for everyone, automatically.</p>
+
+    <p class="count" id="count"></p>
+    <ul class="feed" id="feed"></ul>
+    <div class="state" id="state">Loading…</div>
+
+    <p class="foot">
+      Spotted a banner we missed? Open BannerBye and hit <em>Report broken site</em>.
+      Every report is reviewed by Claude and usually live within hours.
+      <a href="/">Get BannerBye →</a>
+    </p>
+  </main>
+
+  <script>
+    (function () {
+      var feed = document.getElementById('feed');
+      var state = document.getElementById('state');
+      var count = document.getElementById('count');
+
+      function fmtDate(ms) {
+        if (!ms) return '';
+        try {
+          return new Date(ms).toLocaleDateString('en-GB', {
+            day: 'numeric', month: 'short', year: 'numeric'
+          });
+        } catch (e) { return ''; }
+      }
+
+      function render(items) {
+        if (!items.length) {
+          state.textContent = 'Nothing here just yet — the first fixes will show up soon.';
+          return;
+        }
+        state.style.display = 'none';
+        count.innerHTML = '<strong>' + items.length + '</strong> site' +
+          (items.length === 1 ? '' : 's') + ' recently handled';
+        var frag = document.createDocumentFragment();
+        items.forEach(function (it) {
+          var li = document.createElement('li');
+          li.className = 'row';
+          var check = document.createElement('span');
+          check.className = 'check'; check.textContent = '✓';
+          var host = document.createElement('span');
+          host.className = 'host'; host.textContent = it.hostname;
+          var meta = document.createElement('span');
+          meta.className = 'meta';
+          var date = document.createElement('span');
+          date.className = 'date'; date.textContent = fmtDate(it.fixedAt);
+          meta.appendChild(date);
+          li.appendChild(check); li.appendChild(host); li.appendChild(meta);
+          frag.appendChild(li);
+        });
+        feed.appendChild(frag);
+      }
+
+      fetch('/api/fixed?limit=100')
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (data) { render((data && data.fixed) || []); })
+        .catch(function () {
+          state.textContent = "Couldn't load the list right now. Try again in a bit.";
+        });
+    })();
+  </script>
+</body>
+</html>
