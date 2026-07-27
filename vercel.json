@@ -21,5 +21,8 @@
   "redirects": [
     { "source": "/waitlist", "destination": "/#waitlist", "permanent": false },
     { "source": "/join", "destination": "/#waitlist", "permanent": false }
+  ],
+  "crons": [
+    { "path": "/api/keep-alive", "schedule": "0 3 * * *" }
   ]
 }
