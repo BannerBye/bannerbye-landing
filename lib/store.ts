@@ -310,6 +310,85 @@ export async function listFixed(opts: {
   }
 }
 
+export interface FixTimeStats {
+  /** Gemiddelde tijd tussen eerste melding en fix, in hele uren (afgerond). */
+  averageFixHours: number | null;
+  /** Mediaan, minder gevoelig voor een enkele trage uitschieter. */
+  medianFixHours: number | null;
+  /** Aantal fixes waarop de metric is gebaseerd. */
+  sampleSize: number;
+}
+
+/**
+ * v0.3.2 (#152): publieke fix-tijd-metric — "melding → live fix" in uren.
+ * Bron: voor elke host in bb:fixed (score=fixedAt) pakken we de VROEGSTE
+ * melding uit bb:host:reports:{host} (score=ts) als moment van melden.
+ * Hosts zonder (nog resterende) report-index — bv. na de 180-dagen-TTL,
+ * of handmatig via /admin gefixt zonder report — worden overgeslagen: die
+ * leveren geen betrouwbare delta op, geen educated guess.
+ *
+ * Bewust hergebruikt: geen nieuwe Redis-keys, geen nieuwe cron, geen nieuwe
+ * infrastructuur — dezelfde twee ZSETs die al bestonden voor /fixed en
+ * /api/reports. Consistent met BannerBye's eigen "geen nieuwe leverancier"-
+ * uitgangspunt (zie ook BannerBye-for-Teams_Scope-MVP_v1.md).
+ */
+export async function getFixTimeStats(opts: {
+  sampleLimit?: number;
+}): Promise<FixTimeStats> {
+  const redis = getRedis();
+  if (!redis) return { averageFixHours: null, medianFixHours: null, sampleSize: 0 };
+  const sampleLimit = Math.min(Math.max(opts.sampleLimit ?? 100, 1), 500);
+  try {
+    const hosts = (await redis.zrange('bb:fixed', 0, sampleLimit - 1, {
+      rev: true,
+      withScores: true,
+    })) as (string | number)[];
+    if (!hosts.length) {
+      return { averageFixHours: null, medianFixHours: null, sampleSize: 0 };
+    }
+    const pairs: { hostname: string; fixedAt: number }[] = [];
+    for (let i = 0; i < hosts.length; i += 2) {
+      pairs.push({ hostname: String(hosts[i]), fixedAt: Number(hosts[i + 1]) });
+    }
+    // Eén pipeline-call voor de vroegste melding per host (index 0, oplopend).
+    const p = redis.pipeline();
+    pairs.forEach((h) => p.zrange(`bb:host:reports:${h.hostname}`, 0, 0, { withScores: true }));
+    const results = (await p.exec()) as (string | number)[][];
+
+    const deltasHours: number[] = [];
+    results.forEach((res, i) => {
+      if (!res || res.length < 2) return; // geen report-index meer (TTL / handmatige fix)
+      const firstReportTs = Number(res[1]);
+      const fixedAt = pairs[i]!.fixedAt;
+      const deltaMs = fixedAt - firstReportTs;
+      if (deltaMs > 0) {
+        deltasHours.push(deltaMs / (1000 * 60 * 60));
+      }
+    });
+
+    if (!deltasHours.length) {
+      return { averageFixHours: null, medianFixHours: null, sampleSize: 0 };
+    }
+    const sum = deltasHours.reduce((a, b) => a + b, 0);
+    const average = sum / deltasHours.length;
+    const sorted = [...deltasHours].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const median =
+      sorted.length % 2 !== 0
+        ? sorted[mid]!
+        : (sorted[mid - 1]! + sorted[mid]!) / 2;
+
+    return {
+      averageFixHours: Math.round(average * 10) / 10,
+      medianFixHours: Math.round(median * 10) / 10,
+      sampleSize: deltasHours.length,
+    };
+  } catch (err) {
+    console.error('[store] getFixTimeStats failed:', err);
+    return { averageFixHours: null, medianFixHours: null, sampleSize: 0 };
+  }
+}
+
 /** Totale tellingen voor de dashboard-header. */
 export async function getStats(): Promise<{
   totalReports: number;

@@ -11,7 +11,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { listFixed } from '../lib/store.js';
+import { listFixed, getFixTimeStats } from '../lib/store.js';
 
 function firstString(value: unknown): string {
   if (typeof value === 'string') return value;
@@ -40,7 +40,12 @@ export default async function handler(
   const limit = Number.isNaN(parsed) ? 60 : Math.min(Math.max(parsed, 1), 200);
 
   try {
-    const fixed = await listFixed({ limit });
+    // v0.3.2 (#152): stats naast de feed — zelfde request, geen extra round-trip
+    // voor de landing/fixed-pagina.
+    const [fixed, stats] = await Promise.all([
+      listFixed({ limit }),
+      getFixTimeStats({ sampleLimit: 100 }),
+    ]);
     res.status(200).json({
       count: fixed.length,
       fixed: fixed.map((f) => ({
@@ -48,6 +53,7 @@ export default async function handler(
         keyword: f.keyword,
         fixedAt: f.fixedAt,
       })),
+      stats,
     });
   } catch (err) {
     console.error('[api/fixed] handler failed:', err);

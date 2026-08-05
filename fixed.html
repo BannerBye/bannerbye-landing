@@ -53,6 +53,31 @@
     .count { margin: 34px 0 12px; font-size: 13px; color: var(--smoke); }
     .count strong { color: var(--ink); }
 
+    .fixtime {
+      display: none;
+      margin: 28px 0 0;
+      padding: 18px 20px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .fixtime .num {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 700;
+      font-size: 28px;
+      color: var(--ember);
+      line-height: 1;
+    }
+    .fixtime .label {
+      font-size: 13px;
+      color: var(--smoke);
+      line-height: 1.4;
+    }
+    .fixtime .label strong { color: var(--ink); }
+
     ul.feed { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
     li.row {
       display: flex; align-items: baseline; gap: 14px;
@@ -76,6 +101,11 @@
     <p class="eyebrow">Recently killed</p>
     <h1 class="font-display">Banners that don't stand a chance anymore.</h1>
     <p class="lede">Every site below was reported by someone. BannerBye's AI reviewed it and now handles it — for everyone, automatically.</p>
+
+    <div class="fixtime" id="fixtime">
+      <span class="num" id="fixtimeNum"></span>
+      <span class="label" id="fixtimeLabel"></span>
+    </div>
 
     <p class="count" id="count"></p>
     <ul class="feed" id="feed"></ul>
@@ -101,6 +131,24 @@
             day: 'numeric', month: 'short', year: 'numeric'
           });
         } catch (e) { return ''; }
+      }
+
+      function fmtHours(h) {
+        if (h < 1) return Math.round(h * 60) + ' min';
+        if (h < 48) return (Math.round(h * 10) / 10) + ' hr';
+        return Math.round(h / 24) + ' days';
+      }
+
+      function renderFixTime(stats) {
+        if (!stats || stats.averageFixHours === null || stats.sampleSize < 3) {
+          return; // te weinig data voor een betekenisvol gemiddelde — stil verbergen
+        }
+        var box = document.getElementById('fixtime');
+        var num = document.getElementById('fixtimeNum');
+        var label = document.getElementById('fixtimeLabel');
+        num.textContent = fmtHours(stats.averageFixHours);
+        label.innerHTML = 'average time from <strong>report</strong> to <strong>live fix</strong>, based on the last ' + stats.sampleSize + ' fixes.';
+        box.style.display = 'flex';
       }
 
       function render(items) {
@@ -132,7 +180,10 @@
 
       fetch('/api/fixed?limit=100')
         .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
-        .then(function (data) { render((data && data.fixed) || []); })
+        .then(function (data) {
+          render((data && data.fixed) || []);
+          renderFixTime(data && data.stats);
+        })
         .catch(function () {
           state.textContent = "Couldn't load the list right now. Try again in a bit.";
         });
