@@ -197,7 +197,7 @@
             <div class="banner" style="left:4%; top:18%; width:46%; background:#fff; color:#0E1116; border:1px solid rgba(0,0,0,0.08); --tx:0; --ty:0; --rot:-4deg; --px:-120px; --py:-80px; --spin:-35deg; animation-delay:0.15s;">
               <div class="row">
                 <div>
-                  <p class="label">Cookies on this page</p>
+                  <p class="label">Cookies on this website</p>
                   <p class="sub">Manage your preferences</p>
                 </div>
                 <div class="chips"><span class="chip" style="background:#0E1116;color:#fff;">OK</span></div>
@@ -414,7 +414,7 @@
       </p>
 
       <div class="mt-12 overflow-x-auto">
-        <table class="w-full min-w-[760px] border-collapse text-left text-sm">
+        <table class="w-full min-w-[920px] border-collapse text-left text-sm">
           <thead>
             <tr>
               <th class="py-5 pr-6 align-bottom"></th>
@@ -424,6 +424,7 @@
               <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Consent-O-Matic</th>
               <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">I don't care about cookies</th>
               <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Super Agent</th>
+              <th class="py-5 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Hush</th>
             </tr>
           </thead>
           <tbody>
@@ -433,10 +434,12 @@
               <td class="py-5 px-5 text-smoke">Auto-clicks</td>
               <td class="py-5 px-5 text-smoke">Hides with CSS</td>
               <td class="py-5 px-5 text-smoke">Auto-clicks</td>
+              <td class="py-5 px-5 text-smoke">Blocks (Safari content blocker)</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">Self-improving, AI-vetted</td>
               <td class="py-5 px-5 bg-ember/5 text-ember font-bold text-base">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
@@ -447,6 +450,7 @@
               <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke">✓</td>
+              <td class="py-5 px-5 text-smoke/40">—</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">Open source &amp; auditable</td>
@@ -454,6 +458,7 @@
               <td class="py-5 px-5 text-smoke">✓</td>
               <td class="py-5 px-5 text-smoke">Partial</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">Zero telemetry</td>
@@ -461,6 +466,7 @@
               <td class="py-5 px-5 text-smoke">✓</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">One preference, every browser</td>
@@ -468,6 +474,7 @@
               <td class="py-5 px-5 text-smoke">Partial</td>
               <td class="py-5 px-5 text-smoke">Partial</td>
               <td class="py-5 px-5 text-smoke">Partial</td>
+              <td class="py-5 px-5 text-smoke">Safari only</td>
             </tr>
             <tr class="border-t border-black/5">
               <td class="py-5 pr-6 font-medium text-ink">Free, no account</td>
@@ -475,13 +482,14 @@
               <td class="py-5 px-5 text-smoke">✓</td>
               <td class="py-5 px-5 text-smoke">✓</td>
               <td class="py-5 px-5 text-smoke/40">—</td>
+              <td class="py-5 px-5 text-smoke">✓</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <p class="mt-8 font-mono text-xs text-smoke/70 tracking-wide">
-        Based on publicly available extension documentation and source code, April 2026.
+        Based on publicly available extension documentation and source code, August 2026.
       </p>
     </div>
   </section>
@@ -526,7 +534,7 @@
               <li><strong>Block pop-ups</strong> stops JavaScript pop-up windows. Cookie banners are overlay-modals <em>inside</em> the page — different beast.</li>
               <li><strong>Prevent Cross-Site Tracking</strong> limits how sites follow you, but doesn't change what they ask you.</li>
               <li><strong>Block All Cookies</strong> doesn't hide banners; sites still display them. And many sites break (no login, no cart).</li>
-              <li><strong>Hide Distracting Items</strong> (iOS 18+) lets you manually hide a banner per page, but Safari doesn't tell the website you said no — which leaves a legal gray area.</li>
+              <li><strong>Hide Distracting Items</strong> (iOS 18+) lets you manually hide a banner per website, but Safari doesn't tell the website you said no — which leaves a legal gray area.</li>
             </ul>
             <p class="mt-4">BannerBye works one level above all of this. It sends a legal "no" via GPC and IAB TCF <em>before</em> the page renders. The banner never has to appear, and the website knows your answer.</p>
             <p class="mt-3"><strong>Safari makes tracking harder. BannerBye makes the asking stop.</strong></p>
@@ -539,11 +547,14 @@
             <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
           </summary>
           <div class="text-smoke leading-relaxed pb-6 pr-10">
-            <p>GDPR gives you the right to refuse non-necessary cookies. In practice, that right disappears the moment a banner appears — most people click "accept" just to make it go away. BannerBye restores the right by answering for you, using three legally recognised signals.</p>
+            <p>GDPR gives you the right to refuse non-necessary cookies. In practice, that right disappears the moment a banner appears — most people tap "accept" just to make it go away. BannerBye restores the right by answering for you, using three legally recognised signals.</p>
             <p class="mt-3"><strong>GPC (Global Privacy Control)</strong> — a header that tells every website "I do not consent to the collection or sale of my personal data." Legally binding under CCPA and increasingly enforced across EU jurisdictions.</p>
             <p class="mt-3"><strong>IAB TCF v2.2 reject string</strong> — the standard consent format used by most cookie banner providers. BannerBye generates a valid string that refuses every data-processing purpose the website might request.</p>
             <p class="mt-3"><strong>Auto-click fallback</strong> — for the rare websites that ignore GPC and IAB. BannerBye finds the reject button and clicks it before you see it.</p>
-            <p class="mt-3">Because the answer arrives before the page renders, the website receives your consent notice before it can collect anything. Strictly necessary cookies (login sessions, shopping carts) still work — that's how GDPR is designed. What stops is the surveillance hiding behind "personalised experience." No data collection, no tracking pixels, no notice you have to dismiss. Just the content you came for.</p>
+            <p class="mt-3">Because the answer arrives before the page renders, the website receives your privacy notice before it can collect anything. Strictly necessary cookies (login sessions, shopping carts) still work — that's how GDPR is designed. What stops is the surveillance hiding behind "personalised experience." No data collection, no tracking pixels, no notice you have to dismiss. Just the content you came for.</p>
+            <p class="mt-3">Under EU data protection law, you have the right to clear information about what data websites collect, why, and how long they may keep it. Most banners bury that information in a "settings" menu three taps deep. BannerBye helps by blocking every non-necessary tracker on the web — no menu, no manual review, no personal data leaking to third parties you never heard of. The blocking happens before the site knows you're there.</p>
+            <p class="mt-3">Every request for information from a website's cookie system gets a standard "no." The blocking is silent — you'll never see a notification, but the data you would have leaked stays with you. This gives you clear information about which cookies matter and lets data protection defaults handle the rest.</p>
+            <p class="mt-3">If a specific website blocks the extension or breaks, one tap on "Report broken site" helps our system fix it — usually within a day.</p>
           </div>
         </details>
 
@@ -607,9 +618,9 @@
             <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
           </summary>
           <div class="text-smoke leading-relaxed pb-6 pr-10">
-            <p>No — by design. BannerBye is a privacy tool, not a consent-automation tool. We always reject because that's what makes us a privacy tool in the first place.</p>
-            <p class="mt-3">If you'd rather always accept: don't install BannerBye. Just click "OK" on banners like you already do — your browser already defaults to accept-friendly behaviour. Automating "accept" via an extension is also legally questionable under GDPR, since consent has to be <em>freely given</em>.</p>
-            <p class="mt-3">There is no toggle in the popup. The choice is made at install: install BannerBye, and your consent preference is set to "reject" for every site, forever.</p>
+            <p>No — by design. BannerBye is a privacy tool, not an auto-accept tool. We always reject because that's what makes us a privacy tool in the first place.</p>
+            <p class="mt-3">If you'd rather always accept: don't install BannerBye. Just tap "OK" on banners like you already do — your browser already defaults to accept-friendly behaviour. Automating "accept" via an extension is also legally questionable under GDPR, since consent has to be <em>freely given</em>.</p>
+            <p class="mt-3">There is no toggle in the popup. The choice is made at install: install BannerBye, and your privacy preference is set to "reject" for every site, forever.</p>
           </div>
         </details>
 
@@ -620,7 +631,7 @@
           </summary>
           <div class="text-smoke leading-relaxed pb-6 pr-10">
             <p>That's Apple's standard warning for every Safari extension that needs access to page content. It describes what the extension is <em>technically capable of</em>, not what BannerBye actually does. Chrome and Firefox show similar warnings for the same reason.</p>
-            <p class="mt-3">BannerBye reads the page structure to find cookie banners and clicks "Reject all." It does not read passwords, credit cards, or browsing history. Full breakdown on the <a href="/privacy" class="text-ember underline underline-offset-2 hover:text-emberdark">privacy page</a>.</p>
+            <p class="mt-3">BannerBye reads the page structure to find cookie banners and taps "Reject all." It does not read passwords, credit cards, or browsing history. Full breakdown on the <a href="/privacy" class="text-ember underline underline-offset-2 hover:text-emberdark">privacy policy</a>.</p>
           </div>
         </details>
 
@@ -630,7 +641,7 @@
             <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
           </summary>
           <div class="text-smoke leading-relaxed pb-6 pr-10">
-            <p>Cookie banners started as a legal requirement — under GDPR, websites need consent before dropping tracking cookies. But most banners are designed to be annoying on purpose. A giant "Accept" button, a tiny "Reject" link, three menus deep before you can say no. Consumer-protection studies often show that a properly built banner would help users deliver a 90%+ rejection rate. Most banners deliver the opposite.</p>
+            <p>Cookie banners started as a legal requirement — under GDPR, websites need permission before dropping tracking cookies. But most banners are designed to be annoying on purpose. A giant "Accept" button, a tiny "Reject" link, three menus deep before you can say no. Consumer-protection studies often show that a properly built banner would help users deliver a 90%+ rejection rate. Most banners deliver the opposite.</p>
             <p class="mt-3">The reason is money. Every rejection means one less profile for online ad-targeting, one less data point sold to marketing networks. So banners are engineered to exhaust you until you accept. This is why the average person clicks "accept all" 40+ times a week — not because they want personalised ads, but because they want their time back.</p>
             <p class="mt-3">BannerBye ends the exhaustion. It handles every type of cookie banner using the same three signals — GPC, IAB TCF, and pattern-based auto-click. One install, one preference, done. No more choosing between your privacy and your patience.</p>
           </div>
