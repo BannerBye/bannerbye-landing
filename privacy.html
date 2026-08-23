@@ -57,7 +57,7 @@
       BannerBye exists to keep cookie banners away from you. It would be a poor product if it tracked you while doing it. So it doesn't. This page explains exactly what the extension does, what it doesn't, and where the data lives.
     </p>
 
-    <p class="mt-8 text-sm font-mono text-smoke">Last updated: 12 June 2026</p>
+    <p class="mt-8 text-sm font-mono text-smoke">Last updated: 23 August 2026</p>
 
     <article class="prose-bb mt-12 text-base text-ink/90">
 
@@ -87,9 +87,11 @@
       <ul>
         <li><strong>Settings</strong> (extension on/off, per-site pause list) — saved in <code>chrome.storage.sync</code>, which means your browser may sync them across your own signed-in devices. BannerBye never sees this sync.</li>
         <li><strong>Cached rules</strong> (the public list of button labels, see below) — saved in <code>chrome.storage.local</code> on your device only.</li>
+        <li><strong>Stats and milestones</strong> (the "banners refused" counter and which milestones you've reached) — saved in <code>chrome.storage.local</code> on your device only.</li>
+        <li><strong>Recent activity</strong> (from version 0.4.0) — the popup can show, as proof behind the counter, on which sites BannerBye refused a banner: the site's hostname, which consent platform was recognised, when, and how often. This is deliberately limited: one line per site (not a log of your visits), at most 40 sites, and every line is deleted automatically after seven days. It lives in <code>chrome.storage.local</code> only, is never included in a report, never sent anywhere, and you can clear the whole list with one tap in the popup.</li>
       </ul>
       <p>
-        That's it. No browsing history, no visited URLs, no clicks, no timestamps, no IDs. None of this data is sent anywhere by the extension.
+        That's it. The extension keeps no browsing history and no record of the pages you read: the activity list above is a short per-site summary of where BannerBye did its work, nothing more. None of this data is sent anywhere by the extension.
       </p>
 
       <h2>The one network request</h2>
