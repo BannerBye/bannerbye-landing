@@ -7,9 +7,14 @@
  * Storage is BEST-EFFORT: als Redis niet is geconfigureerd of faalt, mag
  * dat NOOIT de /api/report-flow breken (mail blijft de bron-van-waarheid).
  *
- * Env-vars (Redis.fromEnv pakt beide naming-conventies automatisch op):
+ * Env-vars: de detectie is prefix-onafhankelijk (zie getRedis). Gezocht wordt
+ * naar een gevulde key die "REST" bevat en op "URL" eindigt, plus een key die
+ * "REST" + "API" bevat, op "TOKEN" eindigt en géén "READ" bevat. Dat dekt o.a.:
  *   - KV_REST_API_URL        / KV_REST_API_TOKEN         (Vercel-integratie)
  *   - UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN  (Upstash direct)
+ *   - elke andere prefix die Vercel's Marketplace-integratie genereert
+ * Reden: Redis.fromEnv() ging uit van exact die twee namen en gaf null zodra
+ * Vercel een afwijkende prefix koos.
  *
  * Datamodel (alle keys geprefixed met bb:):
  *   bb:report:{id}          STRING(JSON)  een losse melding, TTL 180d
@@ -47,19 +52,28 @@ let cached: Redis | null | undefined;
 /** Lazy singleton. Geeft null als de env-vars ontbreken (graceful degrade). */
 export function getRedis(): Redis | null {
   if (cached !== undefined) return cached;
-  const hasVercel =
-    !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
-  const hasUpstash =
-    !!process.env.UPSTASH_REDIS_REST_URL &&
-    !!process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!hasVercel && !hasUpstash) {
+
+  const entries = Object.entries(process.env);
+  const url = entries.find(([key, value]) =>
+    Boolean(value) && key.includes("REST") && key.endsWith("URL"),
+  )?.[1];
+  const token = entries.find(([key, value]) =>
+    Boolean(value) &&
+    key.includes("REST") &&
+    key.includes("API") &&
+    key.endsWith("TOKEN") &&
+    !key.includes("READ"),
+  )?.[1];
+
+  if (!url || !token) {
     cached = null;
     return cached;
   }
+
   try {
-    cached = Redis.fromEnv();
+    cached = new Redis({ url, token });
   } catch (err) {
-    console.error('[store] Redis.fromEnv failed:', err);
+    console.error("[store] Redis init failed:", err);
     cached = null;
   }
   return cached;

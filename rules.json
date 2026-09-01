@@ -1,13 +1,14 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-14T00:00:00.000Z",
+  "updatedAt": "2026-08-30T16:06:34.945Z",
   "autoclick": {
     "rejectKeywords": [
       "reject additional cookies",
       "sie möchten diese cookies nicht akzeptieren? dann können sie diese hier ablehnen.",
       "wil je de cookies niet accepteren? dan kun je ze hier weigeren.",
       "don't want to accept the cookies? then you can refuse them here.",
-      "don’t want to accept the cookies? then you can refuse them here."
+      "don’t want to accept the cookies? then you can refuse them here.",
+      "mit erforderlichen einstellungen fortfahren"
     ],
     "ambiguousKeywords": [],
     "stepIntoKeywords": [],
