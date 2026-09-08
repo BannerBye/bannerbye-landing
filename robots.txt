@@ -3,3 +3,5 @@ Allow: /
 Disallow: /admin
 
 Sitemap: https://bannerbye.com/sitemap.xml
+
+# AI crawlers: see https://bannerbye.com/llms.txt for a structured summary

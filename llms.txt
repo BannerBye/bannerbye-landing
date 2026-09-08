@@ -1,0 +1,39 @@
+# BannerBye
+
+> BannerBye is an open-source browser extension that refuses cookie banners before they render — instead of hiding them with CSS or auto-clicking after they appear. It sends the GPC (Global Privacy Control) header, an IAB TCF v2.2 reject string, recognised consent-platform handlers (OneTrust, Cookiebot, Usercentrics, TrustArc, Didomi), and a pattern-based auto-click fallback for custom banners.
+
+BannerBye is made by Kreatrix B.V. (KvK 17193389), an independent product company based in Brainport, the Netherlands. The extension is MIT-licensed and its full source code is public on GitHub. It sends zero passive telemetry: nothing about a user's browsing is sent to BannerBye's servers, except the hostname a user explicitly submits through "Report broken site." Reported sites are reviewed by an automated pipeline — Anthropic's Claude checks each proposed fix before it ships — and an approved fix typically reaches every user within hours, without an extension update.
+
+What BannerBye does not do: it does not accept cookies on a user's behalf, does not offer a toggle to switch from reject to accept, does not track which sites a user visits, and does not run ads or sell data. It always answers "no" to non-essential cookie requests; users who want to accept cookies should not install it.
+
+Free on Chrome, Firefox and Microsoft Edge. On Safari for iPhone, iPad and Mac it is a one-time paid App Store download (App Store distribution does not support free-with-optional-donation pricing the way browser stores do).
+
+## Product
+
+- [Home](https://bannerbye.com/): what it is, how it works, comparison table, FAQ
+- [Privacy policy](https://bannerbye.com/privacy)
+- [What we've fixed](https://bannerbye.com/fixed): a public, live log of user-reported sites and how long each fix took
+
+## Comparisons
+
+- [BannerBye vs I Don't Care About Cookies](https://bannerbye.com/vs/i-dont-care-about-cookies): prevents vs hides
+- [BannerBye vs Consent-O-Matic](https://bannerbye.com/vs/consent-o-matic): prevents vs click-after-render
+- [BannerBye vs Super Agent](https://bannerbye.com/vs/super-agent): open source and free vs closed source and paid
+- [BannerBye vs Hush](https://bannerbye.com/vs/hush): every browser vs Safari only
+
+## Install
+
+- [Chrome Web Store](https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg)
+- [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/bannerbye/)
+- [Mac App Store](https://apps.apple.com/nl/app/bannerbye/id6771131989?platform=mac)
+- [iOS / iPadOS App Store](https://apps.apple.com/app/id6771131989)
+
+## Source
+
+- [GitHub — extension source (MIT)](https://github.com/BannerBye/BannerBye)
+- [GitHub — website source](https://github.com/BannerBye/bannerbye-landing)
+
+## Optional
+
+- Contact: hello@bannerbye.com
+- Publisher: Kreatrix B.V., KvK 17193389, Brainport, the Netherlands
