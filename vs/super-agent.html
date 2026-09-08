@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye vs Super Agent — open source or closed and paid? | BannerBye</title>
+  <meta name="description" content="Super Agent is closed-source, collects usage data and runs on a subscription. BannerBye is open source, sends zero telemetry, and is free on Chrome, Firefox and Edge. Full comparison." />
+  <link rel="canonical" href="https://bannerbye.com/vs/super-agent" />
+  <meta property="og:title" content="BannerBye vs Super Agent" />
+  <meta property="og:description" content="A privacy tool you can't audit, that collects data and charges a subscription — versus one that's open, free and silent. An honest, sourced comparison." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/vs/super-agent" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BannerBye vs Super Agent" />
+  <meta name="twitter:description" content="A privacy tool you can't audit, that collects data and charges a subscription — versus one that's open, free and silent." />
+  <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.025em; }
+    .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "BannerBye", "item": "https://bannerbye.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Compare", "item": "https://bannerbye.com/#compare" },
+          { "@type": "ListItem", "position": 3, "name": "BannerBye vs Super Agent", "item": "https://bannerbye.com/vs/super-agent" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Super Agent open source?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Super Agent is closed source, so there is no way to independently verify what the extension does with the page access it requests. BannerBye's full source code is public on GitHub — every rule and every line can be audited or forked." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Super Agent collect data?",
+            "acceptedAnswer": { "@type": "Answer", "text": "According to its own privacy policy, Super Agent collects anonymous usage statistics. That may be limited in practice, but it can't be verified without access to the source. BannerBye sends zero telemetry: nothing about your browsing leaves your device, except the hostname you explicitly submit through 'Report broken site'." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Super Agent free?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No, Super Agent runs on a paid subscription model. BannerBye is free on Chrome, Firefox and Edge, with a one-time purchase for the Safari version on iPhone, iPad and Mac, reflecting Apple's App Store distribution model rather than a recurring fee." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-cream text-ink antialiased selection:bg-ember selection:text-white">
+
+  <!-- NAV -->
+  <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group" aria-label="BannerBye">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true" class="shrink-0">
+        <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z" stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+        <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+        <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+        <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="font-display text-xl font-semibold leading-none tracking-tight">Banner<span class="text-ember">Bye</span></span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-8 text-sm text-smoke">
+      <a href="/#how" class="hover:text-ink transition">How it works</a>
+      <a href="/#compare" class="hover:text-ink transition">Compare</a>
+      <a href="/fixed" class="hover:text-ink transition">What we've fixed</a>
+      <a href="/#get" class="hover:text-ink transition">Get it</a>
+    </nav>
+    <a href="/#get" class="hidden sm:inline-flex items-center rounded-full bg-ink text-cream text-sm px-4 py-2 hover:bg-ember transition-colors">Install free</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="max-w-4xl mx-auto px-6 pt-16 pb-10">
+    <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-6"><a href="/#compare" class="hover:text-ink transition">Compare</a> / Super Agent</p>
+    <h1 class="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
+      BannerBye vs<br/><span class="text-ember">Super Agent</span>
+    </h1>
+    <p class="mt-6 text-lg text-smoke leading-relaxed max-w-2xl">
+      A privacy tool you can't audit, that collects data and charges a subscription — versus one that's open, free and silent.
+    </p>
+  </section>
+
+  <!-- INTRO -->
+  <section class="max-w-3xl mx-auto px-6 pb-16 text-smoke leading-relaxed space-y-4">
+    <p>Super Agent (super-agent.com) combines auto-clicking reject buttons with sending the GPC signal — mechanically, a similar idea to what BannerBye and Consent-O-Matic do. It has around 4,300 users and a 3.6 rating on the Chrome Web Store.</p>
+    <p>The difference isn't the mechanism. It's what sits underneath it: Super Agent is closed source, runs on a paid subscription, and according to its own privacy policy collects anonymous usage statistics. For a tool whose entire premise is protecting your privacy, that combination is worth pausing on.</p>
+  </section>
+
+  <!-- TABLE -->
+  <section class="border-t border-black/5 bg-white/60">
+    <div class="max-w-4xl mx-auto px-6 py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight mb-8">Side by side</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[560px] border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th class="py-4 pr-6 align-bottom"></th>
+              <th class="py-4 px-5 font-display text-base font-semibold tracking-tight bg-ember/5 border-t-2 border-ember align-bottom"><span class="text-ink">Banner</span><span class="text-ember">Bye</span></th>
+              <th class="py-4 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Super Agent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-black/10">
+              <td class="py-4 pr-6 font-medium text-ink">How it works</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink font-semibold">Sends a reject signal before the banner renders</td>
+              <td class="py-4 px-5 text-smoke">Auto-clicks reject after the banner renders, plus sends GPC</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Sends GPC signal</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke">✓</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Open source &amp; auditable</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓ MIT, fully public</td>
+              <td class="py-4 px-5 text-smoke/40">— closed source</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Zero telemetry</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke/40">— collects anonymous usage stats per its own policy</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Free, no account</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke/40">— paid subscription</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Platforms</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Chrome, Firefox, Edge, Safari (iOS, iPadOS, macOS)</td>
+              <td class="py-4 px-5 text-smoke">Chrome, Firefox</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Rule updates</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">Self-healing — reported sites fixed automatically, usually within hours</td>
+              <td class="py-4 px-5 text-smoke">Not publicly documented</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Users / rating (Chrome Web Store)</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Newer, growing</td>
+              <td class="py-4 px-5 text-smoke">~4,300 users, 3.6 rating</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 font-mono text-xs text-smoke/70 tracking-wide">Based on publicly available extension documentation, source code, Super Agent's own privacy policy and Chrome Web Store listings, September 2026.</p>
+    </div>
+  </section>
+
+  <!-- HONEST TAKE -->
+  <section class="max-w-3xl mx-auto px-6 py-16 text-smoke leading-relaxed space-y-4">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink mb-2">The honest take</h2>
+    <p>Sending GPC and auto-clicking reject is a solid mechanism — Super Agent gets the fundamentals right on that front. What undermines the pitch is trust: you're asked to install something with broad access to every page you visit, run by a company you can't inspect the code of, that collects usage data by its own admission, and that charges a recurring fee for the privilege.</p>
+    <p>That's not a technical criticism, it's a structural one. A privacy tool asking you to trust it on faith is a harder sell than one that shows its work. BannerBye's entire codebase is public, the extension sends nothing home except what you explicitly report, and the core product stays free — because charging a subscription for "trust us" isn't a model that fits a tool built to reduce, not add to, what you have to take on faith online.</p>
+  </section>
+
+  <!-- GET IT -->
+  <section id="get" class="relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-6 pb-24">
+      <div class="rounded-3xl bg-ink text-cream p-10 md:p-14 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-ember/20 blur-3xl"></div>
+        <div class="relative">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-cream/60 mb-4">Get BannerBye</p>
+          <h2 class="font-display text-3xl md:text-4xl font-semibold leading-tight tracking-tight max-w-xl">Bye bye cookie banners.</h2>
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <a href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Chrome</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Chrome →</span>
+            </a>
+            <a href="https://addons.mozilla.org/firefox/addon/bannerbye/" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Firefox</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Firefox →</span>
+            </a>
+            <a href="https://apps.apple.com/app/id6771131989" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Safari</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">App Store →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-black/5 bg-cream">
+    <div class="max-w-3xl mx-auto px-6 py-20">
+      <h2 class="font-display text-3xl font-semibold tracking-tight mb-10">Questions about this comparison</h2>
+      <style>
+        .cfaq details > summary { list-style: none; }
+        .cfaq details > summary::-webkit-details-marker { display: none; }
+        .cfaq details > summary .faq-icon { transition: transform 0.2s ease; }
+        .cfaq details[open] > summary .faq-icon { transform: rotate(45deg); }
+      </style>
+      <div class="cfaq border-t border-black/10">
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Is Super Agent open source?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>No. Super Agent is closed source, so there is no way to independently verify what the extension does with the page access it requests.</p>
+            <p class="mt-3">BannerBye's full source code is public on <a href="https://github.com/BannerBye/BannerBye" class="text-ember underline underline-offset-2 hover:text-emberdark">GitHub</a> — every rule and every line can be audited or forked.</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Does Super Agent collect data?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>According to its own privacy policy, Super Agent collects anonymous usage statistics. That may be limited in practice, but it can't be independently verified without access to the source.</p>
+            <p class="mt-3">BannerBye sends zero telemetry: nothing about your browsing leaves your device, except the hostname you explicitly submit through "Report broken site."</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Is Super Agent free?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>No, Super Agent runs on a paid subscription model.</p>
+            <p class="mt-3">BannerBye is free on Chrome, Firefox and Edge, with a one-time purchase for the Safari version on iPhone, iPad and Mac, reflecting Apple's App Store distribution model rather than a recurring fee.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-black/5">
+    <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-sm text-smoke">
+      <div class="flex items-center gap-2">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z" stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+          <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+          <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+          <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="font-display text-base font-semibold text-ink tracking-tight">Banner<span class="text-ember">Bye</span></span>
+        <span class="text-smoke ml-2">© 2026</span>
+      </div>
+      <div class="flex items-center gap-6 flex-wrap">
+        <a href="/vs/i-dont-care-about-cookies" class="hover:text-ink transition">vs I Don't Care About Cookies</a>
+        <a href="/vs/consent-o-matic" class="hover:text-ink transition">vs Consent-O-Matic</a>
+        <a href="/vs/hush" class="hover:text-ink transition">vs Hush</a>
+        <a href="/privacy" class="hover:text-ink transition">Privacy</a>
+        <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener" class="hover:text-ink transition">Open source</a>
+      </div>
+    </div>
+    <p class="max-w-6xl mx-auto px-6 pb-10 text-xs text-smoke/70">Made in Brainport.</p>
+  </footer>
+
+</body>
+</html>
