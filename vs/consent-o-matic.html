@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye vs Consent-O-Matic — prevent the banner, or click it away? | BannerBye</title>
+  <meta name="description" content="Consent-O-Matic auto-clicks reject after the banner has already rendered. BannerBye prevents it from rendering at all. Compare GPC, platforms, mobile support and update speed." />
+  <link rel="canonical" href="https://bannerbye.com/vs/consent-o-matic" />
+  <meta property="og:title" content="BannerBye vs Consent-O-Matic" />
+  <meta property="og:description" content="One clicks reject after the banner flashes on screen. The other stops it from appearing. An honest, sourced comparison." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/vs/consent-o-matic" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BannerBye vs Consent-O-Matic" />
+  <meta name="twitter:description" content="One clicks reject after the banner flashes on screen. The other stops it from appearing." />
+  <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.025em; }
+    .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "BannerBye", "item": "https://bannerbye.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Compare", "item": "https://bannerbye.com/#compare" },
+          { "@type": "ListItem", "position": 3, "name": "BannerBye vs Consent-O-Matic", "item": "https://bannerbye.com/vs/consent-o-matic" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Does Consent-O-Matic prevent cookie banners from appearing?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Consent-O-Matic waits for the banner to render, recognises the consent-management platform behind it, and clicks reject on your behalf. The banner is visible for a moment before it disappears. BannerBye sends a reject signal before the page renders, so on sites where that signal is honoured, the banner never appears at all." }
+          },
+          {
+            "@type": "Question",
+            "name": "Why doesn't Consent-O-Matic send a GPC signal?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It's a deliberate choice by the Aarhus University research team behind it, reflecting their focus on consent-management-platform interaction rather than the separate GPC standard. BannerBye sends both: the GPC header on every request, and an IAB TCF v2.2 reject string for sites using that framework." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Consent-O-Matic still maintained?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It's an open-source academic project, not a commercial product, so updates follow the researchers' availability rather than a fixed release cadence. BannerBye runs a self-healing pipeline: a broken site gets reported, Anthropic's Claude reviews the proposed fix, and an approved rule ships to every user automatically, typically within hours." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-cream text-ink antialiased selection:bg-ember selection:text-white">
+
+  <!-- NAV -->
+  <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group" aria-label="BannerBye">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true" class="shrink-0">
+        <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z" stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+        <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+        <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+        <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="font-display text-xl font-semibold leading-none tracking-tight">Banner<span class="text-ember">Bye</span></span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-8 text-sm text-smoke">
+      <a href="/#how" class="hover:text-ink transition">How it works</a>
+      <a href="/#compare" class="hover:text-ink transition">Compare</a>
+      <a href="/fixed" class="hover:text-ink transition">What we've fixed</a>
+      <a href="/#get" class="hover:text-ink transition">Get it</a>
+    </nav>
+    <a href="/#get" class="hidden sm:inline-flex items-center rounded-full bg-ink text-cream text-sm px-4 py-2 hover:bg-ember transition-colors">Install free</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="max-w-4xl mx-auto px-6 pt-16 pb-10">
+    <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-6"><a href="/#compare" class="hover:text-ink transition">Compare</a> / Consent-O-Matic</p>
+    <h1 class="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
+      BannerBye vs<br/><span class="text-ember">Consent-O-Matic</span>
+    </h1>
+    <p class="mt-6 text-lg text-smoke leading-relaxed max-w-2xl">
+      One clicks reject after the banner flashes on screen. The other stops it from appearing.
+    </p>
+  </section>
+
+  <!-- INTRO -->
+  <section class="max-w-3xl mx-auto px-6 pb-16 text-smoke leading-relaxed space-y-4">
+    <p>Consent-O-Matic comes out of Aarhus University, built by researchers including Midas Nouwens as part of academic work on consent-management platforms (CMPs). It's fully open source, has around 115,000 users and a 4.3 rating on the Chrome Web Store, and updates its rules through a static JSON list rather than any hidden logic.</p>
+    <p>It works by recognising the CMP behind a banner and clicking "reject" for you — a real improvement over clicking through banners yourself. But it acts after the banner has already rendered, which is a structurally different moment than where BannerBye operates.</p>
+  </section>
+
+  <!-- TABLE -->
+  <section class="border-t border-black/5 bg-white/60">
+    <div class="max-w-4xl mx-auto px-6 py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight mb-8">Side by side</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[560px] border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th class="py-4 pr-6 align-bottom"></th>
+              <th class="py-4 px-5 font-display text-base font-semibold tracking-tight bg-ember/5 border-t-2 border-ember align-bottom"><span class="text-ink">Banner</span><span class="text-ember">Bye</span></th>
+              <th class="py-4 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">Consent-O-Matic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-black/10">
+              <td class="py-4 pr-6 font-medium text-ink">How it works</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink font-semibold">Sends a reject signal before the banner renders</td>
+              <td class="py-4 px-5 text-smoke">Detects the CMP and clicks reject after the banner has rendered</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Visible flicker</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">None on supported sites</td>
+              <td class="py-4 px-5 text-smoke">Banner briefly appears before being dismissed</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Sends GPC signal</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke/40">— not by default</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Open source</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓ MIT</td>
+              <td class="py-4 px-5 text-smoke">✓ fully open</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Zero telemetry</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke">✓</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Maker</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Kreatrix B.V., independent product company</td>
+              <td class="py-4 px-5 text-smoke">Aarhus University research team</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Platforms</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Chrome, Firefox, Edge, Safari (iOS, iPadOS, macOS)</td>
+              <td class="py-4 px-5 text-smoke">Chrome, Firefox, Safari desktop — no mobile version</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Rule updates</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">Self-healing — reported sites fixed automatically, usually within hours</td>
+              <td class="py-4 px-5 text-smoke">Static JSON rule list, updated on the maintainers' schedule</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Price</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Free (Chrome, Firefox, Edge) · one-time €1.99 on Safari</td>
+              <td class="py-4 px-5 text-smoke">Free</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 font-mono text-xs text-smoke/70 tracking-wide">Based on publicly available extension documentation, source code and Chrome Web Store listings, September 2026.</p>
+    </div>
+  </section>
+
+  <!-- HONEST TAKE -->
+  <section class="max-w-3xl mx-auto px-6 py-16 text-smoke leading-relaxed space-y-4">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink mb-2">The honest take</h2>
+    <p>Consent-O-Matic is a genuinely well-built academic tool, and its CMP-recognition logic is the same general idea behind BannerBye's own CMP-specific handlers (both projects independently recognise providers like OneTrust and Didomi and answer their API directly). Where the two diverge is the moment of action: Consent-O-Matic still lets the banner render before it clicks reject, so you see a brief flash — a small thing, but not nothing across dozens of banners a day.</p>
+    <p>The bigger practical gap is coverage: no GPC signal, no mobile version, and updates that depend on volunteer researcher time rather than a maintained release cycle. That's a reasonable trade-off for an academic project not built to be a consumer product. BannerBye is built specifically to be maintained daily, across every browser people actually use, including the ones Consent-O-Matic doesn't reach.</p>
+  </section>
+
+  <!-- GET IT -->
+  <section id="get" class="relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-6 pb-24">
+      <div class="rounded-3xl bg-ink text-cream p-10 md:p-14 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-ember/20 blur-3xl"></div>
+        <div class="relative">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-cream/60 mb-4">Get BannerBye</p>
+          <h2 class="font-display text-3xl md:text-4xl font-semibold leading-tight tracking-tight max-w-xl">Bye bye cookie banners.</h2>
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <a href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Chrome</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Chrome →</span>
+            </a>
+            <a href="https://addons.mozilla.org/firefox/addon/bannerbye/" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Firefox</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Firefox →</span>
+            </a>
+            <a href="https://apps.apple.com/app/id6771131989" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Safari</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">App Store →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-black/5 bg-cream">
+    <div class="max-w-3xl mx-auto px-6 py-20">
+      <h2 class="font-display text-3xl font-semibold tracking-tight mb-10">Questions about this comparison</h2>
+      <style>
+        .cfaq details > summary { list-style: none; }
+        .cfaq details > summary::-webkit-details-marker { display: none; }
+        .cfaq details > summary .faq-icon { transition: transform 0.2s ease; }
+        .cfaq details[open] > summary .faq-icon { transform: rotate(45deg); }
+      </style>
+      <div class="cfaq border-t border-black/10">
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Does Consent-O-Matic prevent cookie banners from appearing?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>No. It waits for the banner to render, recognises the consent-management platform behind it, and clicks reject on your behalf. The banner is visible for a moment before it disappears.</p>
+            <p class="mt-3">BannerBye sends a reject signal before the page renders, so on sites where that signal is honoured, the banner never appears at all.</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Why doesn't Consent-O-Matic send a GPC signal?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>It's a deliberate choice by the Aarhus University research team, reflecting their focus on consent-management-platform interaction rather than the separate GPC standard.</p>
+            <p class="mt-3">BannerBye sends both: the GPC header on every request, and an IAB TCF v2.2 reject string for sites using that framework.</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Is Consent-O-Matic still maintained?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>It's an open-source academic project, not a commercial product, so updates follow the researchers' availability rather than a fixed release cadence.</p>
+            <p class="mt-3">BannerBye runs a self-healing pipeline: a broken site gets reported, Anthropic's Claude reviews the proposed fix, and an approved rule ships to every user automatically — typically within hours.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-black/5">
+    <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-sm text-smoke">
+      <div class="flex items-center gap-2">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z" stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+          <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+          <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+          <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="font-display text-base font-semibold text-ink tracking-tight">Banner<span class="text-ember">Bye</span></span>
+        <span class="text-smoke ml-2">© 2026</span>
+      </div>
+      <div class="flex items-center gap-6 flex-wrap">
+        <a href="/vs/i-dont-care-about-cookies" class="hover:text-ink transition">vs I Don't Care About Cookies</a>
+        <a href="/vs/super-agent" class="hover:text-ink transition">vs Super Agent</a>
+        <a href="/vs/hush" class="hover:text-ink transition">vs Hush</a>
+        <a href="/privacy" class="hover:text-ink transition">Privacy</a>
+        <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener" class="hover:text-ink transition">Open source</a>
+      </div>
+    </div>
+    <p class="max-w-6xl mx-auto px-6 pb-10 text-xs text-smoke/70">Made in Brainport.</p>
+  </footer>
+
+</body>
+</html>
