@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye vs I Don't Care About Cookies — hide or refuse? | BannerBye</title>
+  <meta name="description" content="I Don't Care About Cookies hides the banner with CSS. BannerBye sends a legal reject signal before the banner ever loads. Full comparison: GPC, open source, telemetry, platforms." />
+  <link rel="canonical" href="https://bannerbye.com/vs/i-dont-care-about-cookies" />
+  <meta property="og:title" content="BannerBye vs I Don't Care About Cookies" />
+  <meta property="og:description" content="One hides the banner. The other tells the site you already said no. An honest, sourced comparison." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/vs/i-dont-care-about-cookies" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="BannerBye vs I Don't Care About Cookies" />
+  <meta name="twitter:description" content="One hides the banner. The other tells the site you already said no." />
+  <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .font-display { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.025em; }
+    .font-mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "BannerBye", "item": "https://bannerbye.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Compare", "item": "https://bannerbye.com/#compare" },
+          { "@type": "ListItem", "position": 3, "name": "BannerBye vs I Don't Care About Cookies", "item": "https://bannerbye.com/vs/i-dont-care-about-cookies" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is I Don't Care About Cookies safe to use?",
+            "acceptedAnswer": { "@type": "Answer", "text": "The original extension was acquired by Avast in September 2022, a company with a documented history of data collection (the Avast/Jumpshot browsing-data sale, reported in 2020). A community-maintained fork, 'I still don't care about cookies', keeps an open-source version going separately. BannerBye is independent of both, publishes its full source code, and sends zero telemetry — nothing about your browsing leaves your device." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does hiding a cookie banner count as refusing consent?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Not on its own. GDPR requires an affirmative signal that consent was refused. CSS-hiding removes the banner from view, but many sites never receive an actual answer, and some default to treating a missing response as acceptance after a timeout. BannerBye instead sends the GPC header and an IAB TCF v2.2 reject string before the page renders, which are protocol-level answers the site's own consent system understands." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I run BannerBye and I Don't Care About Cookies at the same time?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It's not recommended. Both extensions try to act on the same banner element, which can cause flicker or conflicting behaviour on some sites. Pick one." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="bg-cream text-ink antialiased selection:bg-ember selection:text-white">
+
+  <!-- NAV -->
+  <header class="max-w-6xl mx-auto px-6 pt-8 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 group" aria-label="BannerBye">
+      <svg width="32" height="32" viewBox="0 0 100 100" fill="none" aria-hidden="true" class="shrink-0">
+        <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z"
+              stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+        <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+        <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+        <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="font-display text-xl font-semibold leading-none tracking-tight">Banner<span class="text-ember">Bye</span></span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-8 text-sm text-smoke">
+      <a href="/#how" class="hover:text-ink transition">How it works</a>
+      <a href="/#compare" class="hover:text-ink transition">Compare</a>
+      <a href="/fixed" class="hover:text-ink transition">What we've fixed</a>
+      <a href="/#get" class="hover:text-ink transition">Get it</a>
+    </nav>
+    <a href="/#get" class="hidden sm:inline-flex items-center rounded-full bg-ink text-cream text-sm px-4 py-2 hover:bg-ember transition-colors">Install free</a>
+  </header>
+
+  <!-- HERO -->
+  <section class="max-w-4xl mx-auto px-6 pt-16 pb-10">
+    <p class="font-mono text-xs uppercase tracking-[0.2em] text-smoke mb-6"><a href="/#compare" class="hover:text-ink transition">Compare</a> / I Don't Care About Cookies</p>
+    <h1 class="font-display text-4xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
+      BannerBye vs<br/><span class="text-ember">I Don't Care About Cookies</span>
+    </h1>
+    <p class="mt-6 text-lg text-smoke leading-relaxed max-w-2xl">
+      One hides the banner. The other tells the site you already said no.
+    </p>
+  </section>
+
+  <!-- INTRO -->
+  <section class="max-w-3xl mx-auto px-6 pb-16 text-smoke leading-relaxed space-y-4">
+    <p>I Don't Care About Cookies is one of the most familiar names in this category. Daniel Kladnik built the original; Avast acquired it in September 2022. A separate, community-maintained fork — "I still don't care about cookies" — keeps an open-source version alive, with roughly 200,000 users, a 4.3 rating and listings in 23 languages, based on Chrome Web Store data checked in August 2026.</p>
+    <p>Both versions do the same core job: they hide the cookie banner with CSS after it loads. That's a real convenience, but it's a different job than what BannerBye does — and the difference matters for what the website on the other end actually receives.</p>
+  </section>
+
+  <!-- TABLE -->
+  <section class="border-t border-black/5 bg-white/60">
+    <div class="max-w-4xl mx-auto px-6 py-16">
+      <h2 class="font-display text-2xl font-semibold tracking-tight mb-8">Side by side</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[560px] border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th class="py-4 pr-6 align-bottom"></th>
+              <th class="py-4 px-5 font-display text-base font-semibold tracking-tight bg-ember/5 border-t-2 border-ember align-bottom"><span class="text-ink">Banner</span><span class="text-ember">Bye</span></th>
+              <th class="py-4 px-5 font-display text-base font-semibold text-smoke tracking-tight align-bottom">I Don't Care About Cookies</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-black/10">
+              <td class="py-4 pr-6 font-medium text-ink">How it works</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink font-semibold">Sends a reject signal before the banner renders</td>
+              <td class="py-4 px-5 text-smoke">Hides the banner with CSS after it has already loaded</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Tells the site you refused</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓ — GPC + IAB TCF</td>
+              <td class="py-4 px-5 text-smoke/40">— visually hidden only</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Sends GPC signal</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke/40">—</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Open source</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓ MIT, fully public</td>
+              <td class="py-4 px-5 text-smoke">Partial — community fork is open; the Avast-owned original's commercial handling is less transparent</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Maker</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Kreatrix B.V., independent</td>
+              <td class="py-4 px-5 text-smoke">Avast/Gen (original); separate community maintainer (fork)</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Zero telemetry</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓</td>
+              <td class="py-4 px-5 text-smoke">Unclear for the Avast-owned version</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Platforms</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Chrome, Firefox, Edge, Safari (iOS, iPadOS, macOS)</td>
+              <td class="py-4 px-5 text-smoke">Chrome, Firefox and other Chromium browsers</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Fixes broken sites</td>
+              <td class="py-4 px-5 bg-ember/5 text-ember font-bold">✓ self-healing, usually within hours</td>
+              <td class="py-4 px-5 text-smoke">Depends on maintainer update cadence</td>
+            </tr>
+            <tr class="border-t border-black/5">
+              <td class="py-4 pr-6 font-medium text-ink">Price</td>
+              <td class="py-4 px-5 bg-ember/5 text-ink">Free (Chrome, Firefox, Edge) · one-time €1.99 on Safari</td>
+              <td class="py-4 px-5 text-smoke">Free</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-6 font-mono text-xs text-smoke/70 tracking-wide">Based on publicly available extension documentation, source code and Chrome Web Store listings, September 2026.</p>
+    </div>
+  </section>
+
+  <!-- HONEST TAKE -->
+  <section class="max-w-3xl mx-auto px-6 py-16 text-smoke leading-relaxed space-y-4">
+    <h2 class="font-display text-2xl font-semibold tracking-tight text-ink mb-2">The honest take</h2>
+    <p>I Don't Care About Cookies wins on reach: it's been around longer, and the community fork covers 23 languages against BannerBye's current smaller rollout. If all you want is the banner gone visually, it does that reliably.</p>
+    <p>The gap is what happens after the banner disappears. Hiding with CSS doesn't tell the website anything — some sites interpret a missing response as consent once a timer runs out, which defeats the point of refusing in the first place. BannerBye answers instead, using the same GPC and IAB TCF signals regulators and ad-tech platforms already recognise, so the "no" is legally legible to the site, not just invisible to you.</p>
+    <p>The Avast acquisition is also worth knowing about if privacy is the reason you're looking at this category at all. Avast's Jumpshot subsidiary was found selling detailed user browsing data in 2020, reported publicly at the time. That's a fact about the company, not a claim about what this specific extension does today — but it's the kind of thing worth weighing when you're choosing a tool whose whole purpose is protecting your data.</p>
+  </section>
+
+  <!-- GET IT -->
+  <section id="get" class="relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-6 pb-24">
+      <div class="rounded-3xl bg-ink text-cream p-10 md:p-14 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-ember/20 blur-3xl"></div>
+        <div class="relative">
+          <p class="font-mono text-xs uppercase tracking-[0.2em] text-cream/60 mb-4">Get BannerBye</p>
+          <h2 class="font-display text-3xl md:text-4xl font-semibold leading-tight tracking-tight max-w-xl">Bye bye cookie banners.</h2>
+          <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl">
+            <a href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Chrome</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Chrome →</span>
+            </a>
+            <a href="https://addons.mozilla.org/firefox/addon/bannerbye/" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Firefox</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">Add to Firefox →</span>
+            </a>
+            <a href="https://apps.apple.com/app/id6771131989" target="_blank" rel="noopener" class="group rounded-2xl bg-cream/5 border border-cream/15 hover:border-ember hover:bg-cream/10 p-5 transition-colors flex flex-col">
+              <p class="font-display text-lg font-semibold tracking-tight">Safari</p>
+              <span class="mt-3 inline-flex items-center text-ember text-sm font-medium">App Store →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-black/5 bg-cream">
+    <div class="max-w-3xl mx-auto px-6 py-20">
+      <h2 class="font-display text-3xl font-semibold tracking-tight mb-10">Questions about this comparison</h2>
+      <style>
+        .cfaq details > summary { list-style: none; }
+        .cfaq details > summary::-webkit-details-marker { display: none; }
+        .cfaq details > summary .faq-icon { transition: transform 0.2s ease; }
+        .cfaq details[open] > summary .faq-icon { transform: rotate(45deg); }
+      </style>
+      <div class="cfaq border-t border-black/10">
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Is I Don't Care About Cookies safe to use?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>The original extension was acquired by Avast in September 2022, a company with a publicly documented history of data collection — most notably the Avast/Jumpshot browsing-data sale, reported in 2020. A community-maintained fork, "I still don't care about cookies," keeps an open-source version going separately from Avast.</p>
+            <p class="mt-3">BannerBye is independent of both, publishes its full source code on <a href="https://github.com/BannerBye/BannerBye" class="text-ember underline underline-offset-2 hover:text-emberdark">GitHub</a>, and sends zero telemetry.</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Does hiding a cookie banner count as refusing consent?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>Not on its own. GDPR requires an affirmative signal that consent was refused. CSS-hiding removes the banner from view, but the site itself may never receive an actual answer — some default to treating a missing response as acceptance after a timeout.</p>
+            <p class="mt-3">BannerBye sends the GPC header and an IAB TCF v2.2 reject string before the page renders — protocol-level answers the site's own consent system is built to understand.</p>
+          </div>
+        </details>
+        <details class="border-b border-black/10">
+          <summary class="flex items-start justify-between gap-6 cursor-pointer py-6 select-none">
+            <span class="font-display text-lg font-semibold tracking-tight pr-4">Can I run BannerBye and I Don't Care About Cookies at the same time?</span>
+            <span class="faq-icon font-mono text-ember text-2xl leading-none mt-1 select-none">+</span>
+          </summary>
+          <div class="text-smoke leading-relaxed pb-6 pr-10">
+            <p>Not recommended. Both extensions try to act on the same banner element, which can cause flicker or conflicting behaviour on some sites. Pick one.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-black/5">
+    <div class="max-w-6xl mx-auto px-6 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 text-sm text-smoke">
+      <div class="flex items-center gap-2">
+        <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path d="M50 10 L 86 22 L 86 52 Q 86 78, 50 92 Q 14 78, 14 52 L 14 22 Z" stroke="#0E1116" stroke-width="6" stroke-linejoin="round" fill="none"/>
+          <rect x="26" y="32" width="48" height="5" rx="2" fill="#0E1116" opacity="0.18"/>
+          <rect x="26" y="42" width="36" height="5" rx="2" fill="#0E1116" opacity="0.3"/>
+          <path d="M30 58 L 46 72 L 76 40" stroke="#E85A2C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <span class="font-display text-base font-semibold text-ink tracking-tight">Banner<span class="text-ember">Bye</span></span>
+        <span class="text-smoke ml-2">© 2026</span>
+      </div>
+      <div class="flex items-center gap-6 flex-wrap">
+        <a href="/vs/consent-o-matic" class="hover:text-ink transition">vs Consent-O-Matic</a>
+        <a href="/vs/super-agent" class="hover:text-ink transition">vs Super Agent</a>
+        <a href="/vs/hush" class="hover:text-ink transition">vs Hush</a>
+        <a href="/privacy" class="hover:text-ink transition">Privacy</a>
+        <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener" class="hover:text-ink transition">Open source</a>
+      </div>
+    </div>
+    <p class="max-w-6xl mx-auto px-6 pb-10 text-xs text-smoke/70">Made in Brainport.</p>
+  </footer>
+
+</body>
+</html>
