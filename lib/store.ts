@@ -22,6 +22,8 @@
  *   bb:host:reports:{host}  ZSET          per-host index, score=ts, member=id
  *   bb:hosts                ZSET          host-ranking, score=count, member=host
  *   bb:host:meta:{host}     HASH          {lastTs,lastVersion,lastMessage}
+ *   bb:rl:{scope}:{key}     STRING(int)   rate-limit-teller, TTL=window
+ *     (fix #5+#6, security-audit 2026-09-16 — zie bumpRateLimit hieronder)
  */
 
 import { Redis } from '@upstash/redis';
@@ -82,6 +84,78 @@ export function getRedis(): Redis | null {
 /** Of persistentie überhaupt actief is (env aanwezig). */
 export function storageEnabled(): boolean {
   return getRedis() !== null;
+}
+
+/**
+ * v0.4.5 (fix #5+#6, security-audit 2026-09-16): gedeelde, Redis-gebaseerde
+ * rate-limiting voor de serverless functions in deze repo.
+ *
+ * De oude aanpak (in-memory `Map` binnen api/report.ts) werkte alleen als
+ * toeval — Vercel spint bij verkeer meerdere PARALLELLE function-instances
+ * op, elk met hun eigen lege Map. Onder load (of gewoon een cold start per
+ * instance) reset de teller dus voortdurend en telt de limiet in de praktijk
+ * niet mee. Redis INCR+EXPIRE is instance-onafhankelijk: alle instances
+ * delen dezelfde teller.
+ *
+ * `bumpRateLimit` verhoogt de teller voor `key` en zet er bij de EERSTE hit
+ * een TTL van `windowSeconds` op (dus een sliding-ish fixed window, niet
+ * perfect maar ruim voldoende voor dit doel). Retourneert de nieuwe telling.
+ *
+ * Fail-open bij Redis-uitval (retourneert 0, dus nooit "over limit") —
+ * consistent met de rest van dit bestand: storage-uitval mag de kernflow
+ * nooit blokkeren. Rate-limiting is al afhankelijk van diezelfde Redis-
+ * instance als persistReport/addWatcher hierboven, dus dit introduceert geen
+ * nieuwe harde dependency.
+ */
+export async function bumpRateLimit(
+  key: string,
+  windowSeconds: number,
+): Promise<number> {
+  const redis = getRedis();
+  if (!redis) return 0;
+  try {
+    const count = await redis.incr(`bb:rl:${key}`);
+    if (count === 1) {
+      await redis.expire(`bb:rl:${key}`, windowSeconds);
+    }
+    return count;
+  } catch (err) {
+    console.error('[store] bumpRateLimit failed:', err);
+    return 0;
+  }
+}
+
+/**
+ * Leest de huidige rate-limit-teller ZONDER 'm te verhogen — gebruikt door
+ * het admin-endpoint om een al-geblokkeerde IP meteen te weigeren vóórdat
+ * de dure token-vergelijking draait (zie api/reports.ts).
+ */
+export async function getRateLimitCount(key: string): Promise<number> {
+  const redis = getRedis();
+  if (!redis) return 0;
+  try {
+    const v = await redis.get<number>(`bb:rl:${key}`);
+    return Number(v ?? 0);
+  } catch (err) {
+    console.error('[store] getRateLimitCount failed:', err);
+    return 0;
+  }
+}
+
+/**
+ * Convenience: verhoog de teller en geef meteen terug of de nieuwe telling
+ * de limiet overschrijdt. Gebruikt waar ELK request moet meetellen (bv.
+ * /api/report's IP- en host-limiet) — in tegenstelling tot het admin-
+ * endpoint, dat alleen MISLUKTE pogingen wil tellen (zie bumpRateLimit direct).
+ */
+export async function isOverRateLimit(
+  key: string,
+  max: number,
+  windowSeconds: number,
+): Promise<boolean> {
+  const count = await bumpRateLimit(key, windowSeconds);
+  // count===0 betekent Redis niet beschikbaar (fail-open) — nooit blokkeren.
+  return count > 0 && count > max;
 }
 
 function newId(ts: number): string {
