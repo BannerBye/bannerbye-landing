@@ -3,7 +3,6 @@
  *
  * GET /api/reports
  *   auth: Bearer-token (header `Authorization: Bearer <ADMIN_TOKEN>`)
- *         of query `?token=<ADMIN_TOKEN>` (handig vanuit de /admin-pagina).
  *   query:
  *     view=reports | hosts | stats   (default: reports)
  *     hostname=<host>                 (alleen view=reports — filter)
@@ -12,9 +11,23 @@
  *   responses:
  *     200 { view, ... }   — data
  *     401 { error }       — geen/onjuiste token
+ *     429 { error }       — te veel mislukte pogingen (fix #6)
  *     503 { error }       — storage niet geconfigureerd
  *
  * Token staat in Vercel env var ADMIN_TOKEN (Production). Niet in de repo.
+ *
+ * v0.4.5 (fix #8, security-audit 2026-09-16): de query-param-fallback
+ * (`?token=`) is VERWIJDERD. Query-strings belanden in server-/proxy-/CDN-
+ * access-logs, browserhistorie en eventuele Referer-headers — een prima weg
+ * om het admin-token te laten lekken. admin.html (de enige aanroeper) stuurt
+ * het token altijd al als `Authorization: Bearer`-header, dus dit kost geen
+ * functionaliteit.
+ *
+ * v0.4.5 (fix #6): brute-force-bescherming. safeEqual() hieronder was al
+ * timing-safe, maar niets hield een aanvaller tegen om onbeperkt te blijven
+ * gokken. Mislukte pogingen worden nu per-IP geteld in Redis (zie
+ * lib/store.ts) en na te veel pogingen binnen het venster geblokkeerd —
+ * ongeacht of het geraden token daarna toevallig klopt.
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -25,7 +38,15 @@ import {
   storageEnabled,
   deleteHost,
   deleteReport,
+  getRateLimitCount,
+  bumpRateLimit,
 } from '../lib/store.js';
+
+// Max 20 mislukte pogingen per IP per 15 minuten. Ruim genoeg voor een
+// menselijk typefoutje, veel te weinig om een token van voldoende lengte te
+// bruteforcen.
+const AUTH_FAIL_MAX = 20;
+const AUTH_FAIL_WINDOW_S = 15 * 60;
 
 /** Timing-safe-ish string compare (constant-time over de kortste lengte). */
 function safeEqual(a: string, b: string): boolean {
@@ -42,10 +63,14 @@ function extractToken(req: VercelRequest): string {
   if (typeof auth === 'string' && auth.startsWith('Bearer ')) {
     return auth.slice('Bearer '.length).trim();
   }
-  const q = req.query['token'];
-  if (typeof q === 'string') return q.trim();
-  if (Array.isArray(q) && q.length) return String(q[0]).trim();
   return '';
+}
+
+function extractIp(req: VercelRequest): string {
+  const ipHeader = req.headers['x-forwarded-for'];
+  return Array.isArray(ipHeader)
+    ? (ipHeader[0] ?? 'unknown')
+    : (ipHeader ?? 'unknown').split(',')[0]!.trim();
 }
 
 function firstString(value: unknown): string {
@@ -73,8 +98,21 @@ export default async function handler(
     res.status(503).json({ error: 'Admin endpoint not configured' });
     return;
   }
+
+  // Fix #6: check VÓÓR de token-vergelijking of dit IP al geblokkeerd is —
+  // zo kost een al-uitgesloten aanvaller ons geen verdere Redis/CPU-tijd.
+  const ip = extractIp(req);
+  const authFailKey = `admin-auth:${ip}`;
+  if ((await getRateLimitCount(authFailKey)) >= AUTH_FAIL_MAX) {
+    res.status(429).json({ error: 'Too many failed attempts — try again later' });
+    return;
+  }
+
   const provided = extractToken(req);
   if (!provided || !safeEqual(provided, expected)) {
+    // Alleen MISLUKTE pogingen tellen mee — Robin's eigen (correcte) verkeer
+    // kan zichzelf zo nooit buitensluiten, hoe vaak /admin ook ververst wordt.
+    await bumpRateLimit(authFailKey, AUTH_FAIL_WINDOW_S);
     res.status(401).json({ error: 'Unauthorized' });
     return;
   }
