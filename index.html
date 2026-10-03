@@ -83,6 +83,19 @@
       ]
     },
     {
+      "@type": "VideoObject",
+      "@id": "https://bannerbye.com/#explainer",
+      "name": "BannerBye in thirty seconds",
+      "description": "How cookie banners work, why hiding them is not the same as refusing them, and what BannerBye does instead.",
+      "thumbnailUrl": "https://bannerbye.com/explainer-poster.jpg",
+      "contentUrl": "https://bannerbye.com/bannerbye-explainer.mp4",
+      "uploadDate": "2026-10-03",
+      "duration": "PT30S",
+      "inLanguage": "en",
+      "isFamilyFriendly": true,
+      "publisher": { "@id": "https://bannerbye.com/#org" }
+    },
+    {
       "@type": "FAQPage",
       "@id": "https://bannerbye.com/#faq",
       "mainEntity": [
@@ -194,6 +207,7 @@
       <span>Banner<em>Bye</em></span>
     </a>
     <nav class="nav__links" aria-label="Sections">
+      <a href="#film">Watch</a>
       <a href="#how">How it works</a>
       <a href="#why">The problem</a>
       <a href="#compare">Alternatives</a>
@@ -228,6 +242,26 @@
         <div class="ledger__row"><span class="ledger__said">“This site uses cookies”</span><span class="ledger__ans">No.</span></div>
         <p class="ledger__out">Poof. Every banner, every site, without a click. <b>You just read the page.</b></p>
       </div>
+    </div>
+  </section>
+
+
+  <!-- EXPLAINER · 30-second film, own band under the hero -->
+  <section id="film" class="film">
+    <div class="wrap">
+      <div class="head head--solo">
+        <h2>Thirty seconds.</h2>
+      </div>
+      <figure class="film__figure">
+        <video class="film__v" controls preload="none" playsinline
+               poster="/explainer-poster.jpg" width="1920" height="1080">
+          <source src="/bannerbye-explainer.webm" type="video/webm">
+          <source src="/bannerbye-explainer.mp4" type="video/mp4">
+          <p>Your browser can't play this video.
+             <a href="/bannerbye-explainer.mp4">Download it instead (MP4, 3.5 MB)</a>.</p>
+        </video>
+        <figcaption class="film__cap">What every site asks, and what BannerBye answers instead. Sound on.</figcaption>
+      </figure>
     </div>
   </section>
 

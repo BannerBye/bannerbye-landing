@@ -20,6 +20,7 @@ multi-page sites: here consistency *is* the goal.
 | Comparison | F3 · tabular spec sheet |
 | Step sequence | F4 · 01/02/03, horizontal flow |
 | Motion | 3 primitives: settle-on-load, hover-shift, open/close |
+| Explainer film | Own band under the hero, click-to-play with sound |
 
 ## Rules that are not negotiable
 
@@ -69,3 +70,6 @@ source line from the pre-redesign site is carried over. The only text removed
 were the decorative mono eyebrows ("The problem", "Questions", …), which are
 navigational labels, not substance. Schema.org answers must keep matching the
 visible FAQ text — Google requires it.
+
+> The film sits **under** the hero, never in it. Rule 1 stands: the hero
+> proof is the refusal ledger, not a video.

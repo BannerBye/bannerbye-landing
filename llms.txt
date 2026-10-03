@@ -37,3 +37,4 @@ Free on Chrome, Firefox and Microsoft Edge. On Safari for iPhone, iPad and Mac i
 
 - Contact: hello@bannerbye.com
 - Publisher: Kreatrix B.V., KvK 17193389, Brainport, the Netherlands
+- [Explainer film](https://bannerbye.com/#film): 30-second video on what BannerBye does and how it differs from hiding a banner.
