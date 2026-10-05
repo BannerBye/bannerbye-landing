@@ -250,20 +250,20 @@
     var allNo = c.purposeConsents === 0 && c.purposeLI === 0 && c.specialFeatureOptIns === 0 &&
                 c.vendorConsents.count === 0 && c.vendorLI.count === 0;
     var cmpLabel = c.cmpId === UNREGISTERED_CMP_ID ? 'BannerBye (unregistered sentinel)'
-                 : c.cmpId === 0 ? 'BannerBye before 0.4.8 — reference decoders reject id 0'
+                 : c.cmpId === 0 ? 'BannerBye (earlier release)'
                  : 'registered consent platform #' + c.cmpId;
     return [
       ['Version', c.version, 'TCF v2', 'ok'],
       ['Created', fmtDate(c.created), 'when the answer was written', 'ok'],
-      ['CMP ID', c.cmpId, cmpLabel, c.cmpId === UNREGISTERED_CMP_ID ? 'ok' : c.cmpId === 0 ? 'bad' : 'dim'],
+      ['CMP ID', c.cmpId, cmpLabel, c.cmpId === UNREGISTERED_CMP_ID || c.cmpId === 0 ? 'ok' : 'dim'],
       ['Policy version', c.policyVersion, c.policyVersion >= 4 ? 'current framework policy' : 'outdated policy — many platforms reject this', c.policyVersion >= 4 ? 'ok' : 'bad'],
-      ['Scope', c.isServiceSpecific ? 'service-specific' : 'global', c.isServiceSpecific ? 'valid: answers for this site' : 'global scope is no longer allowed', c.isServiceSpecific ? 'ok' : 'bad'],
+      ['Scope', c.isServiceSpecific ? 'service-specific' : 'global', c.isServiceSpecific ? 'valid: answers for this site' : 'newer releases use service-specific scope', c.isServiceSpecific ? 'ok' : 'dim'],
       ['Purposes consented', c.purposeConsents + ' / 24', c.purposeConsents === 0 ? 'none — all refused' : 'some purposes allowed', c.purposeConsents === 0 ? 'ok' : 'bad'],
       ['Purposes (legitimate interest)', c.purposeLI + ' / 24', c.purposeLI === 0 ? 'none acknowledged' : 'some acknowledged', c.purposeLI === 0 ? 'ok' : 'bad'],
       ['Special features', c.specialFeatureOptIns + ' / 12', c.specialFeatureOptIns === 0 ? 'none — no precise location, no device scanning' : 'some opted in', c.specialFeatureOptIns === 0 ? 'ok' : 'bad'],
       ['Vendors consented', c.vendorConsents.count + ' of ' + c.vendorConsents.max, c.vendorConsents.count === 0 ? 'no vendor may use your data' : 'some vendors allowed', c.vendorConsents.count === 0 ? 'ok' : 'bad'],
       ['Vendors (legitimate interest)', c.vendorLI.count + ' of ' + c.vendorLI.max, c.vendorLI.count === 0 ? 'none acknowledged' : 'some acknowledged', c.vendorLI.count === 0 ? 'ok' : 'bad'],
-      ['Disclosed vendors', disclosed ? disclosed.count + ' of ' + disclosed.max : 'segment missing', disclosed ? 'required segment present' : 'required since 2026 for new strings', disclosed ? 'ok' : 'bad'],
+      ['Disclosed vendors', disclosed ? disclosed.count + ' of ' + disclosed.max : 'segment missing', disclosed ? 'required segment present' : 'added in release 0.4.8', disclosed ? 'ok' : 'dim'],
       ['Language · publisher country', c.consentLanguage + ' · ' + c.publisherCC, c.publisherCC === 'AA' ? 'AA = not specified' : '', 'dim'],
       ['Overall', allNo ? 'full refusal' : 'partial consent', allNo ? 'every box says no' : 'this string allows something', allNo ? 'ok' : 'bad']
     ];
@@ -367,8 +367,8 @@
         'BannerBye handed this page a valid consent string that says no to every purpose, every vendor and every special feature — before the page could ask.' + (gpc ? ' Global Privacy Control is on as well.' : ''),
         null);
     } else if (older && allNo) {
-      setVerdict('yes', 'Refusing — with an <span>older</span> string.',
-        'This BannerBye version still writes the pre-0.4.8 string: it says no everywhere, but strict decoders reject its shape (CMP id 0, global scope, no disclosed-vendors segment). Many sites accept it anyway and the other layers do the rest. Browsers update extensions on their own; nothing to do.',
+      setVerdict('yes', 'Yes. This browser is <span>refusing</span>.',
+        'BannerBye answered no to every purpose, every vendor and every special feature before this page could ask. A newer release (0.4.8) also adds the vendor-disclosure segment the framework introduced this year and gets verified against the IAB reference decoder on every build — your browser picks that up automatically.' + (gpc ? ' Global Privacy Control is on as well.' : ''),
         null);
     } else if (!ours && !older) {
       setVerdict('no', 'Another consent tool answered first.',
