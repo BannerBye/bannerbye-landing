@@ -45,6 +45,45 @@ const ALLOWED_ORIGIN = 'https://bannerbye.com';
 const GH_DISPATCH_REPO = process.env.GH_DISPATCH_REPO || 'BannerBye/BannerBye';
 
 /**
+ * Ontvangstbevestiging aan een melder die een e-mailadres achterliet.
+ * Best-effort: logt bij falen, gooit nooit.
+ */
+async function sendAcknowledgement(apiKey: string, email: string, hostname: string): Promise<void> {
+  const text = [
+    `Thanks — we got your report about ${hostname}.`,
+    ``,
+    `What happens next: an automated check visits the site and proposes a fix; a human reviews it before it ships. Fixes reach every BannerBye user through the rule list, usually without an extension update. You'll get one more email from us when ${hostname} is handled.`,
+    ``,
+    `Until then, you can pause BannerBye on that site from the toolbar button if it gets in the way.`,
+    ``,
+    `Recent fixes: https://bannerbye.com/fixed`,
+    `Reply to this email if you want to add anything.`,
+    ``,
+    `— BannerBye`,
+  ].join('\n');
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const r = await fetch(RESEND_API_ENDPOINT, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: 'BannerBye <hello@bannerbye.com>',
+        to: email,
+        reply_to: REPORT_TO,
+        subject: `We got your report about ${hostname}`,
+        text,
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    if (!r.ok) console.error('[api/report] acknowledgement failed:', r.status, await r.text());
+  } catch (err) {
+    console.error('[api/report] acknowledgement fetch failed:', err);
+  }
+}
+
+/**
  * Trigger de analyzer meteen via GitHub repository_dispatch. Best-effort met
  * korte timeout — een fout hier mag de melding NOOIT laten klappen.
  */
@@ -303,6 +342,14 @@ export default async function handler(
   // hier mag de melding nooit laten klappen. Alleen bij een geldig adres.
   if (email) {
     await addWatcher(hostname, email);
+    // 5 okt 2026 (productonderzoek, bouwpunt 3): directe ontvangstbevestiging.
+    // Tot nu toe hoorde een melder pas iets bij een fix — en bij een melding
+    // die geen codefix nodig had (of die bleef liggen) dus nooit. Eén korte
+    // mail, geen marketing, geen tracking. Best-effort, na de interne mail,
+    // zodat een Resend-storing hier nooit de melding zelf kost. Misbruik
+    // (andermans adres invullen) is begrensd door de IP- en host-limieten
+    // hierboven en de mail bevat niets van de melder behalve de hostname.
+    await sendAcknowledgement(apiKey, email, hostname);
   }
 
   // Meteen de analyzer aftrappen (i.p.v. dagschema). Best-effort en vóór de
