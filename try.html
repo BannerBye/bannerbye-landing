@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye — Try it: a real cookie banner, refused in front of you</title>
+  <meta name="description" content="This page carries a real cookie banner with the reject button hidden behind a settings step. If BannerBye is installed, you'll see it refused before you can reach for the mouse." />
+  <link rel="canonical" href="https://bannerbye.com/try" />
+  <meta property="og:title" content="BannerBye — Try it on a real banner" />
+  <meta property="og:description" content="A cookie banner with the reject button hidden behind a settings step. Watch BannerBye refuse it." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/try" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/system.css" />
+  <style>
+    /* page-local. Tokens only. */
+    .verdict[data-state="refused"] h2 span,.verdict[data-state="still"] h2 span{color:var(--color-accent);}
+    .log{margin-top:var(--space-md);font-family:var(--font-mono);font-weight:500;font-size:var(--text-xs);line-height:1.7;
+         color:var(--color-ink-2);background:var(--color-paper-2);border:var(--rule-hair) solid var(--color-rule);
+         border-radius:var(--radius-sm);padding:.8rem .9rem;list-style:none;display:grid;gap:.15rem;}
+    .log li b{color:var(--color-accent);font-weight:500;}
+    .log li i{color:var(--color-ink-3);font-style:normal;}
+    .row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-top:var(--space-md);}
+
+    /* The demo banner. Deliberately styled like the ones you meet in the wild:
+       fixed to the bottom, full width, two buttons, reject one step deeper. */
+    .cb{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:#fff;color:#1a1a1a;
+        border-top:1px solid #d9d9d9;box-shadow:0 -8px 32px rgba(0,0,0,.12);font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;}
+    .cb__in{max-width:980px;margin:0 auto;padding:18px 20px;}
+    .cb h2{font-size:17px;font-weight:700;margin:0 0 6px;font-family:inherit;letter-spacing:0;}
+    .cb p{margin:0 0 12px;color:#444;}
+    .cb p a{color:#1a56db;}
+    .cb__btns{display:flex;flex-wrap:wrap;gap:10px;}
+    .cb button{font:inherit;font-weight:600;padding:11px 20px;border-radius:4px;border:1px solid #1a56db;cursor:pointer;background:#fff;color:#1a56db;}
+    .cb button.cb__primary{background:#1a56db;color:#fff;}
+    .cb__panel{display:none;}
+    .cb[data-step="2"] .cb__first{display:none;}
+    .cb[data-step="2"] .cb__panel{display:block;}
+    .cb__row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #eee;}
+    .cb__row:first-child{border-top:0;}
+    .cb__row label{font-weight:600;}
+    .cb__row small{display:block;font-weight:400;color:#666;}
+    .cb__row input{width:40px;height:22px;}
+  </style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav__row">
+    <a class="brand" href="/" aria-label="BannerBye">
+      <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 4 5.2v6.4c0 5 3.4 9.1 8 10.4 4.6-1.3 8-5.4 8-10.4V5.2L12 2Z" fill="var(--color-accent)"/>
+        <path d="m8.4 12.1 2.5 2.5 4.8-5" fill="none" stroke="var(--color-accent-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Banner<em>Bye</em></span>
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="/#how">How it works</a>
+      <a href="/#compare">Compare</a>
+      <a href="/privacy">Privacy</a>
+    </nav>
+    <a class="btn btn--fill" data-install="primary" href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg">Add to Chrome</a>
+  </div>
+</header>
+
+<main class="doc wrap" id="main">
+  <div class="doc__head">
+    <p class="doc__meta" style="margin-top:0">Try it</p>
+    <h1 style="margin-top:var(--space-sm)">This page has a cookie banner.</h1>
+    <p class="doc__lede">A real one — with the reject button hidden one step deeper, the way most of them are built. If you can see it, BannerBye isn't running. If you can't, it just refused it for you.</p>
+  </div>
+
+  <section class="verdict" id="verdict" data-state="wait" aria-live="polite">
+    <h2 id="vTitle">Watching the banner…</h2>
+    <p id="vText">It's at the bottom of the page. Don't touch it.</p>
+    <div class="row">
+      <a class="btn btn--fill" id="vCta" href="/" data-install="primary" hidden>Get BannerBye</a>
+      <button class="btn btn--line" id="again" type="button" hidden>Show it again</button>
+    </div>
+  </section>
+
+  <ul class="log" id="log" aria-label="What happened">
+    <li id="l0"><i>0 ms</i> page started, banner in the HTML</li>
+  </ul>
+
+  <div class="prose">
+    <h2>What the banner does</h2>
+    <p>It's wired like the ones you meet in the wild. <strong>Accept all</strong> is one click and sets a cookie that says you agreed to everything. <strong>Reject all</strong> isn't on the first screen: you have to open <em>Manage settings</em> first, then find it. That extra step is the whole business model — most people click the blue button.</p>
+    <p>BannerBye doesn't. On this page it finds the banner, opens the settings step, clicks <em>Reject all</em> and clears the banner — before the page has finished painting, if it can. Then it tells you so in the popup, under <em>this site</em>.</p>
+
+    <h2>Which layer did the work</h2>
+    <p>This banner is deliberately dumb: no consent platform, no IAB TCF, no handler to recognise it. So the first four layers have nothing to grab. What refuses it is the fifth: the pattern-based fallback that reads the buttons the way you would — and knows that "Manage settings" is a door, not an answer. On most real sites one of the earlier layers gets there first and the banner never draws at all. <a href="/#how">All five layers, explained.</a></p>
+
+    <h2>Try it on something harder</h2>
+    <p>The <a href="/tcf-check">signal check</a> decodes the consent string BannerBye hands to every TCF site, field by field. And any site in the wild that still shows you a banner: open BannerBye, hit <em>Report broken site</em>, and it lands on the <a href="/fixed">public fix log</a>.</p>
+  </div>
+</main>
+
+<footer class="foot wrap">
+  <p class="foot__say">Most banner tools hide. <span>We refuse.</span></p>
+  <div class="foot__meta">
+    <span>BannerBye © 2026 · Kreatrix B.V. · Made in Brainport.</span>
+    <nav class="foot__links" aria-label="Footer">
+      <a href="/try">Try it</a>
+      <a href="/fixed">What we've fixed</a>
+      <a href="/tcf-check">Signal check</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener">Open source</a>
+      <a href="mailto:hello@bannerbye.com">hello@bannerbye.com</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- The banner. Plain HTML, no consent platform behind it. -->
+<div class="cb" id="cookie-banner" role="dialog" aria-modal="false" aria-labelledby="cbTitle" data-step="1">
+  <div class="cb__in">
+    <h2 id="cbTitle">We value your privacy</h2>
+    <p>We and our 847 partners use cookies and similar technologies to store and access information on your device, to personalise content and ads, measure performance and develop products. You can change your choices at any time. <a href="/privacy">Cookie policy</a></p>
+    <div class="cb__first">
+      <div class="cb__btns">
+        <button type="button" class="cb__primary" id="cbAccept">Accept all</button>
+        <button type="button" id="cbManage">Manage settings</button>
+      </div>
+    </div>
+    <div class="cb__panel" id="cbPanel">
+      <div class="cb__row"><label for="cbNec">Strictly necessary<small>Always on</small></label><input type="checkbox" id="cbNec" checked disabled /></div>
+      <div class="cb__row"><label for="cbAna">Analytics<small>Helps us understand how the site is used</small></label><input type="checkbox" id="cbAna" checked /></div>
+      <div class="cb__row"><label for="cbAds">Advertising<small>Personalised ads and measurement</small></label><input type="checkbox" id="cbAds" checked /></div>
+      <div class="cb__btns" style="margin-top:12px">
+        <button type="button" class="cb__primary" id="cbSave">Save and accept</button>
+        <button type="button" id="cbReject">Reject all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/install.js" defer></script>
+<script>
+(function () {
+  var t0 = performance.now();
+  var banner = document.getElementById('cookie-banner');
+  var log = document.getElementById('log');
+  var verdict = document.getElementById('verdict');
+  var vTitle = document.getElementById('vTitle');
+  var vText = document.getElementById('vText');
+  var vCta = document.getElementById('vCta');
+  var again = document.getElementById('again');
+  var done = false;
+  var manageAt = null;
+
+  function ms() { return Math.round(performance.now() - t0); }
+  function line(html) {
+    var li = document.createElement('li');
+    li.innerHTML = '<i>' + ms() + ' ms</i> ' + html;
+    log.appendChild(li);
+  }
+  function setCookie(v) {
+    // A demo cookie, first-party, one day. Nothing reads it.
+    document.cookie = 'bbdemo_consent=' + v + '; path=/; max-age=86400; SameSite=Lax';
+  }
+  function isVisible() {
+    if (!banner || !banner.isConnected) return false;
+    var cs = getComputedStyle(banner);
+    if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) return false;
+    var r = banner.getBoundingClientRect();
+    return r.height > 0 && r.width > 0 && r.top < innerHeight;
+  }
+  function finish(state, title, text) {
+    if (done) return;
+    done = true;
+    verdict.setAttribute('data-state', state);
+    vTitle.innerHTML = title;
+    vText.innerHTML = text;
+    again.hidden = false;
+    if (state === 'still') vCta.hidden = false;
+  }
+
+  // What the buttons do when something — you, or BannerBye — clicks them.
+  document.getElementById('cbManage').addEventListener('click', function () {
+    banner.setAttribute('data-step', '2');
+    manageAt = ms();
+    line('<b>Manage settings</b> opened — the reject button is now reachable');
+  });
+  document.getElementById('cbAccept').addEventListener('click', function () {
+    setCookie('accepted');
+    banner.remove();
+    line('<b>Accept all</b> clicked — cookie set: agreed to everything');
+    finish('still', 'You just agreed to <span>everything.</span>',
+      'That\'s the click the banner was built for. Install BannerBye and it never gets the chance.');
+  });
+  document.getElementById('cbSave').addEventListener('click', function () {
+    setCookie('partial');
+    banner.remove();
+    line('<b>Save and accept</b> clicked — cookie set with your toggles');
+    finish('still', 'Saved — <span>with the toggles still on.</span>',
+      'Two were pre-checked. You\'d have had to untick them first. BannerBye doesn\'t negotiate; it rejects.');
+  });
+  document.getElementById('cbReject').addEventListener('click', function (ev) {
+    setCookie('rejected');
+    banner.remove();
+    var trusted = ev.isTrusted;
+    line('<b>Reject all</b> clicked — cookie set: rejected' + (trusted ? '' : ' <i>(scripted click)</i>'));
+    if (!userTouched && (!trusted || manageAt !== null)) {
+      finish('refused', 'Refused. <span>' + ms() + ' ms.</span>',
+        'BannerBye opened the settings step and clicked <em>Reject all</em> for you — faster than you could read the first line. Check the popup: this site now shows as refused.');
+    } else {
+      finish('refused', 'Refused — <span>by you.</span>',
+        'Two clicks and a hunt for the small button. BannerBye does that on every site, before you see it. ' + (hasExt() ? '' : 'Install it and come back.'));
+      if (!hasExt()) vCta.hidden = false;
+    }
+  });
+
+  var userTouched = false;
+  banner.addEventListener('pointerdown', function () { userTouched = true; }, true);
+  banner.addEventListener('keydown', function () { userTouched = true; }, true);
+
+  function hasExt() {
+    // The extension exposes its presence through the TCF stub it installs.
+    return typeof window.__tcfapi === 'function';
+  }
+
+  // Watch the banner: removed or hidden without a button click = another layer
+  // (pre-hide CSS or a cleanup pass) got it.
+  var mo = new MutationObserver(function () {
+    if (done) return;
+    if (!banner.isConnected) {
+      line('banner removed from the page');
+      finish('refused', 'Refused. <span>' + ms() + ' ms.</span>',
+        'The banner is gone and no accept button was clicked. BannerBye cleared it. Check the popup: this site shows as refused.');
+    }
+  });
+  mo.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
+
+  var ticks = 0;
+  var iv = setInterval(function () {
+    ticks++;
+    if (done) { clearInterval(iv); return; }
+    if (!isVisible() && banner.isConnected && ticks > 3) {
+      line('banner hidden before it could draw');
+      finish('refused', 'Refused. <span>' + ms() + ' ms.</span>',
+        'The banner never got to paint. BannerBye hid it and is working on the reject click behind it. Check the popup: this site shows as refused.');
+      clearInterval(iv);
+      return;
+    }
+    if (ticks >= 24) { // 6 s
+      clearInterval(iv);
+      line('6 s passed — banner still on screen');
+      finish('still', 'Still there. <span>BannerBye isn\'t running here.</span>',
+        hasExt()
+          ? 'The extension is installed but didn\'t refuse this one. That\'s a bug we want: open BannerBye and hit <em>Report broken site</em>.'
+          : 'Install it — it takes one click — then come back to this page and watch the banner lose. On Safari, remember to switch BannerBye on in Settings first.');
+    }
+  }, 250);
+
+  again.addEventListener('click', function () { location.reload(); });
+})();
+</script>
+</body>
+</html>
