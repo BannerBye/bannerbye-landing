@@ -218,6 +218,8 @@ h1,h2,h3,h4,.display{
 .machine li b{font-family:var(--font-mono);font-weight:500;color:var(--color-accent);flex:none;font-size:var(--text-xs);padding-top:.15rem;}
 .machine li span{color:var(--color-ink-inv-2);min-width:0;}
 .machine li span i{font-style:normal;color:var(--color-ink-inv);}
+.machine li span a{color:var(--color-accent);text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+.machine li span a:hover{color:var(--color-ink-inv);}
 
 /* ── F4 · step sequence (the only numerals besides the stats) ─ */
 .loop{display:grid;gap:var(--space-lg);grid-template-columns:minmax(0,1fr);margin-top:clamp(2rem,4vw,3rem);}

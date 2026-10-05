@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BannerBye — Signal check: is it refusing on your behalf?</title>
+  <meta name="description" content="Live check of the signals BannerBye sends to every website: the IAB TCF consent string, decoded field by field, plus Global Privacy Control. Also decodes any TC string you paste." />
+  <link rel="canonical" href="https://bannerbye.com/tcf-check" />
+  <meta property="og:title" content="BannerBye — Signal check" />
+  <meta property="og:description" content="Read the exact consent string BannerBye hands to every site, decoded in front of you." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/tcf-check" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/system.css" />
+  <style>
+    /* page-local: the raw string box and the paste field. Tokens only. */
+    .sig{margin-top:var(--space-md);font-family:var(--font-mono);font-weight:500;font-size:var(--text-xs);
+         line-height:1.6;color:var(--color-ink-2);background:var(--color-paper-2);border:var(--rule-hair) solid var(--color-rule);
+         border-radius:var(--radius-sm);padding:.8rem .9rem;overflow-wrap:anywhere;word-break:break-all;}
+    .sig b{color:var(--color-accent);font-weight:500;}
+    .paste{margin-top:var(--space-md);display:grid;gap:.6rem;}
+    .paste textarea{width:100%;min-height:5.5rem;font-family:var(--font-mono);font-weight:500;font-size:var(--text-xs);
+         line-height:1.6;color:var(--color-ink);background:var(--color-paper);border:var(--rule-hair) solid var(--color-rule-strong);
+         border-radius:var(--radius-sm);padding:.8rem .9rem;resize:vertical;}
+    .paste textarea:focus{outline:2px solid var(--color-accent);outline-offset:2px;}
+    .paste__row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+    .paste__note{font-size:var(--text-xs);color:var(--color-ink-3);}
+    .verdict[data-state="no"] h2 span,.verdict[data-state="paused"] h2 span{color:var(--color-accent);}
+    .verdict[data-state="yes"] h2 span{color:var(--color-accent);}
+    .prose td.ok{color:var(--color-ink);}
+    .prose td.bad{color:var(--color-accent);}
+    .prose td.dim{color:var(--color-ink-3);}
+  </style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav__row">
+    <a class="brand" href="/" aria-label="BannerBye">
+      <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 4 5.2v6.4c0 5 3.4 9.1 8 10.4 4.6-1.3 8-5.4 8-10.4V5.2L12 2Z" fill="var(--color-accent)"/>
+        <path d="m8.4 12.1 2.5 2.5 4.8-5" fill="none" stroke="var(--color-accent-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Banner<em>Bye</em></span>
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="/#how">How it works</a>
+      <a href="/#compare">Compare</a>
+      <a href="/privacy">Privacy</a>
+    </nav>
+    <a class="btn btn--fill" data-install="primary" href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg">Add to Chrome</a>
+  </div>
+</header>
+
+<main class="doc wrap" id="main">
+  <div class="doc__head">
+    <p class="doc__meta" style="margin-top:0">Signal check</p>
+    <h1 style="margin-top:var(--space-sm)">Is BannerBye actually refusing?</h1>
+    <p class="doc__lede">This page reads the exact signals BannerBye hands to every website — and decodes them in front of you. No trust required.</p>
+  </div>
+
+  <section class="verdict" id="verdict" data-state="wait" aria-live="polite">
+    <h2 id="vTitle">Reading the signals…</h2>
+    <p id="vText">Give it a second.</p>
+    <a class="btn btn--fill" id="vCta" href="/" data-install="primary" hidden>Get BannerBye</a>
+  </section>
+
+  <dl class="stat2" id="stats" hidden>
+    <div>
+      <dt>Purposes consented</dt>
+      <dd id="sPurposes">—</dd>
+    </div>
+    <div>
+      <dt>Vendors consented</dt>
+      <dd id="sVendors">—</dd>
+    </div>
+    <div>
+      <dt>Global Privacy Control</dt>
+      <dd id="sGpc">—</dd>
+    </div>
+  </dl>
+  <p class="feed__state" id="statsNote" hidden>Decoded live from the string below. Zero is the number you want.</p>
+
+  <div class="prose">
+    <h2>What this browser sent</h2>
+    <p id="rawLabel">The IAB TCF consent string found on this page:</p>
+    <div class="sig" id="raw">—</div>
+
+    <table id="fields" hidden>
+      <thead>
+        <tr><th>Field</th><th>Value</th><th>Meaning</th></tr>
+      </thead>
+      <tbody id="fieldsBody"></tbody>
+    </table>
+
+    <h2>Decode any TC string</h2>
+    <p>Paste a consent string from any site — the <code>euconsent-v2</code> cookie, or what <code>__tcfapi('getTCData')</code> returns — and see what it actually says. Everything runs in your browser; nothing is sent anywhere.</p>
+    <form class="paste" id="pasteForm">
+      <label class="paste__note" for="pasteIn">TC string</label>
+      <textarea id="pasteIn" spellcheck="false" placeholder="CQ…"></textarea>
+      <div class="paste__row">
+        <button class="btn btn--line" type="submit">Decode</button>
+        <span class="paste__note" id="pasteState"></span>
+      </div>
+    </form>
+    <table id="pasteFields" hidden>
+      <thead>
+        <tr><th>Field</th><th>Value</th><th>Meaning</th></tr>
+      </thead>
+      <tbody id="pasteBody"></tbody>
+    </table>
+
+    <h2>What you're looking at</h2>
+    <p>Most European sites run a consent management platform that speaks the IAB Transparency &amp; Consent Framework. Before that platform decides whether to show you a banner, it looks for an existing answer: a <strong>TC string</strong> on <code>window.__tcfapi</code> and in the <code>euconsent-v2</code> cookie. BannerBye puts that answer there first, at <code>document_start</code>, before the site's own scripts run. The answer is no — to all 24 purposes, all special features and every vendor.</p>
+    <p>A string is only an answer if it decodes. The decoder on this page is written independently of the extension, and every BannerBye build is checked against the <a href="https://github.com/InteractiveAdvertisingBureau/iabtcf-es" target="_blank" rel="noopener">IAB Tech Lab reference library</a> before it ships: service-specific scope, policy version 5 and the vendor-disclosure segment the framework has required since 2026.</p>
+    <p><strong>Global Privacy Control</strong> is the second signal: a browser flag and an HTTP header (<code>Sec-GPC: 1</code>) that say "do not sell or share my data". This page can read the flag; the header is only visible to the server, so it isn't shown here.</p>
+    <p>Not every banner speaks TCF. For the rest, BannerBye has recognised handlers for the big consent platforms and a pattern-based fallback that clicks "reject" for you. Those don't show up on this page — <a href="/#how">how it works</a> explains every layer.</p>
+    <p>Something looks off? Open BannerBye and hit <em>Report broken site</em>, or write to <a href="mailto:hello@bannerbye.com">hello@bannerbye.com</a>.</p>
+  </div>
+</main>
+
+<footer class="foot wrap">
+  <p class="foot__say">Most banner tools hide. <span>We refuse.</span></p>
+  <div class="foot__meta">
+    <span>BannerBye © 2026 · Kreatrix B.V. · Made in Brainport.</span>
+    <nav class="foot__links" aria-label="Footer">
+      <a href="/fixed">What we've fixed</a>
+      <a href="/tcf-check">Signal check</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener">Open source</a>
+      <a href="mailto:hello@bannerbye.com">hello@bannerbye.com</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="/install.js" defer></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── A small, independent IAB TCF v2 decoder ─────────────────────
+     Written from the IAB Tech Lab "Consent string and vendor list
+     formats v2" spec. Deliberately NOT shared with the extension's
+     encoder, so this page is a real cross-check, not a mirror. */
+
+  var UNREGISTERED_CMP_ID = 4095;
+
+  function b64urlToBits(s) {
+    var b = s.replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    var bin = atob(b), bits = '';
+    for (var i = 0; i < bin.length; i++) bits += ('00000000' + bin.charCodeAt(i).toString(2)).slice(-8);
+    return bits;
+  }
+
+  function Reader(bits) { this.b = bits; this.p = 0; }
+  Reader.prototype.int = function (n) {
+    if (this.p + n > this.b.length) throw new Error('string too short at bit ' + this.p);
+    var v = parseInt(this.b.substr(this.p, n), 2); this.p += n; return v;
+  };
+  Reader.prototype.bool = function () { return this.int(1) === 1; };
+  Reader.prototype.letters = function (n) {
+    var out = '';
+    for (var i = 0; i < n; i++) out += String.fromCharCode(65 + this.int(6));
+    return out;
+  };
+  Reader.prototype.date = function () { return new Date(this.int(36) * 100); };
+  Reader.prototype.bitfieldCount = function (n) {
+    var c = 0;
+    for (var i = 0; i < n; i++) if (this.bool()) c++;
+    return c;
+  };
+  /* vendor section: MaxVendorId(16) IsRange(1) then bitfield or ranges.
+     Returns { max, count } where count = number of vendor ids set. */
+  Reader.prototype.vendors = function () {
+    var max = this.int(16), range = this.bool(), count = 0;
+    if (!range) {
+      count = this.bitfieldCount(max);
+    } else {
+      var n = this.int(12);
+      for (var i = 0; i < n; i++) {
+        var isRange = this.bool(), start = this.int(16);
+        if (isRange) { var end = this.int(16); count += (end - start + 1); } else { count += 1; }
+      }
+    }
+    return { max: max, count: count };
+  };
+
+  function decodeCore(seg) {
+    var r = new Reader(b64urlToBits(seg)), o = {};
+    o.version = r.int(6);
+    if (o.version !== 2) throw new Error('not a TCF v2 string (version ' + o.version + ')');
+    o.created = r.date();
+    o.lastUpdated = r.date();
+    o.cmpId = r.int(12);
+    o.cmpVersion = r.int(12);
+    o.consentScreen = r.int(6);
+    o.consentLanguage = r.letters(2);
+    o.vendorListVersion = r.int(12);
+    o.policyVersion = r.int(6);
+    o.isServiceSpecific = r.bool();
+    o.useNonStandardTexts = r.bool();
+    o.specialFeatureOptIns = r.bitfieldCount(12);
+    o.purposeConsents = r.bitfieldCount(24);
+    o.purposeLI = r.bitfieldCount(24);
+    o.purposeOneTreatment = r.bool();
+    o.publisherCC = r.letters(2);
+    o.vendorConsents = r.vendors();
+    o.vendorLI = r.vendors();
+    o.pubRestrictions = r.int(12);
+    return o;
+  }
+
+  function decodeSegment(seg) {
+    var r = new Reader(b64urlToBits(seg));
+    var type = r.int(3);
+    if (type === 1) return { type: 'DisclosedVendors', vendors: r.vendors() };
+    if (type === 2) return { type: 'AllowedVendors', vendors: r.vendors() };
+    if (type === 3) return { type: 'PublisherTC' };
+    return { type: 'unknown(' + type + ')' };
+  }
+
+  function decode(tcString) {
+    var segs = tcString.trim().split('.');
+    var out = { core: decodeCore(segs[0]), segments: [] };
+    for (var i = 1; i < segs.length; i++) {
+      try { out.segments.push(decodeSegment(segs[i])); }
+      catch (e) { out.segments.push({ type: 'undecodable', error: String(e.message || e) }); }
+    }
+    return out;
+  }
+
+  /* ── rendering ───────────────────────────────────────────────── */
+
+  function fmtDate(d) {
+    try { return d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
+    catch (e) { return String(d); }
+  }
+
+  function rows(dec) {
+    var c = dec.core, disclosed = null;
+    dec.segments.forEach(function (s) { if (s.type === 'DisclosedVendors') disclosed = s.vendors; });
+    var allNo = c.purposeConsents === 0 && c.purposeLI === 0 && c.specialFeatureOptIns === 0 &&
+                c.vendorConsents.count === 0 && c.vendorLI.count === 0;
+    var cmpLabel = c.cmpId === UNREGISTERED_CMP_ID ? 'BannerBye (unregistered sentinel)'
+                 : c.cmpId === 0 ? 'BannerBye before 0.4.8 — reference decoders reject id 0'
+                 : 'registered consent platform #' + c.cmpId;
+    return [
+      ['Version', c.version, 'TCF v2', 'ok'],
+      ['Created', fmtDate(c.created), 'when the answer was written', 'ok'],
+      ['CMP ID', c.cmpId, cmpLabel, c.cmpId === UNREGISTERED_CMP_ID ? 'ok' : c.cmpId === 0 ? 'bad' : 'dim'],
+      ['Policy version', c.policyVersion, c.policyVersion >= 4 ? 'current framework policy' : 'outdated policy — many platforms reject this', c.policyVersion >= 4 ? 'ok' : 'bad'],
+      ['Scope', c.isServiceSpecific ? 'service-specific' : 'global', c.isServiceSpecific ? 'valid: answers for this site' : 'global scope is no longer allowed', c.isServiceSpecific ? 'ok' : 'bad'],
+      ['Purposes consented', c.purposeConsents + ' / 24', c.purposeConsents === 0 ? 'none — all refused' : 'some purposes allowed', c.purposeConsents === 0 ? 'ok' : 'bad'],
+      ['Purposes (legitimate interest)', c.purposeLI + ' / 24', c.purposeLI === 0 ? 'none acknowledged' : 'some acknowledged', c.purposeLI === 0 ? 'ok' : 'bad'],
+      ['Special features', c.specialFeatureOptIns + ' / 12', c.specialFeatureOptIns === 0 ? 'none — no precise location, no device scanning' : 'some opted in', c.specialFeatureOptIns === 0 ? 'ok' : 'bad'],
+      ['Vendors consented', c.vendorConsents.count + ' of ' + c.vendorConsents.max, c.vendorConsents.count === 0 ? 'no vendor may use your data' : 'some vendors allowed', c.vendorConsents.count === 0 ? 'ok' : 'bad'],
+      ['Vendors (legitimate interest)', c.vendorLI.count + ' of ' + c.vendorLI.max, c.vendorLI.count === 0 ? 'none acknowledged' : 'some acknowledged', c.vendorLI.count === 0 ? 'ok' : 'bad'],
+      ['Disclosed vendors', disclosed ? disclosed.count + ' of ' + disclosed.max : 'segment missing', disclosed ? 'required segment present' : 'required since 2026 for new strings', disclosed ? 'ok' : 'bad'],
+      ['Language · publisher country', c.consentLanguage + ' · ' + c.publisherCC, c.publisherCC === 'AA' ? 'AA = not specified' : '', 'dim'],
+      ['Overall', allNo ? 'full refusal' : 'partial consent', allNo ? 'every box says no' : 'this string allows something', allNo ? 'ok' : 'bad']
+    ];
+  }
+
+  function fillTable(tbody, list) {
+    tbody.textContent = '';
+    list.forEach(function (r) {
+      var tr = document.createElement('tr');
+      var a = document.createElement('td'); a.textContent = r[0];
+      var b = document.createElement('td'); b.textContent = String(r[1]); b.className = r[3] || '';
+      var c = document.createElement('td'); c.textContent = r[2]; c.className = 'dim';
+      tr.appendChild(a); tr.appendChild(b); tr.appendChild(c);
+      tbody.appendChild(tr);
+    });
+  }
+
+  function setVerdict(state, title, text, cta) {
+    var v = document.getElementById('verdict');
+    v.setAttribute('data-state', state);
+    document.getElementById('vTitle').innerHTML = title;
+    document.getElementById('vText').textContent = text;
+    var btn = document.getElementById('vCta');
+    btn.hidden = !cta;
+    if (cta) { btn.textContent = cta.label; btn.href = cta.href; }
+  }
+
+  function showRaw(str, label) {
+    document.getElementById('rawLabel').textContent = label;
+    var box = document.getElementById('raw');
+    box.textContent = '';
+    if (!str) { box.textContent = '—'; return; }
+    var parts = str.split('.');
+    parts.forEach(function (p, i) {
+      if (i > 0) { var dot = document.createElement('b'); dot.textContent = '.'; box.appendChild(dot); }
+      box.appendChild(document.createTextNode(p));
+    });
+  }
+
+  /* ── live check ──────────────────────────────────────────────── */
+
+  function gpcFlag() {
+    try { return navigator.globalPrivacyControl === true; } catch (e) { return false; }
+  }
+
+  function bbState() {
+    try { return window.__bannerbyeState || null; } catch (e) { return null; }
+  }
+
+  function cookieString() {
+    var m = document.cookie.match(/(?:^|;\s*)euconsent-v2=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function finishLive(tcString, source) {
+    var gpc = gpcFlag();
+    document.getElementById('sGpc').textContent = gpc ? 'on' : 'off';
+
+    if (!tcString) {
+      var st = bbState();
+      showRaw(null, 'No TC string found on this page.');
+      if (st === 'paused' || st === 'disabled') {
+        setVerdict('paused', 'BannerBye is <span>paused</span> here.',
+          'The extension is installed but switched off for this site or everywhere. Turn it back on from the toolbar button and reload.', null);
+      } else if (gpc) {
+        setVerdict('no', 'Half a signal.',
+          'Global Privacy Control is on, but there is no consent string. If BannerBye is installed, reload once; if it keeps happening, report it.',
+          { label: 'Get BannerBye', href: '/' });
+      } else {
+        setVerdict('no', 'No signal <span>found</span>.',
+          'Nothing on this page is refusing for you. Either BannerBye isn\'t installed in this browser, or it isn\'t enabled yet — on Safari that\'s a switch in Settings, which the app walks you through.',
+          { label: 'Get BannerBye', href: '/' });
+      }
+      document.getElementById('stats').hidden = true;
+      return;
+    }
+
+    showRaw(tcString, source);
+    var dec;
+    try { dec = decode(tcString); }
+    catch (e) {
+      setVerdict('no', 'A signal is there, but it doesn\'t <span>decode</span>.',
+        'Something handed this page a consent string that isn\'t valid TCF v2 (' + (e.message || e) + '). If BannerBye is installed, please report this page so we can look.',
+        null);
+      return;
+    }
+
+    var list = rows(dec), c = dec.core;
+    fillTable(document.getElementById('fieldsBody'), list);
+    document.getElementById('fields').hidden = false;
+    document.getElementById('sPurposes').textContent = c.purposeConsents + ' / 24';
+    document.getElementById('sVendors').textContent = String(c.vendorConsents.count);
+    document.getElementById('stats').hidden = false;
+    document.getElementById('statsNote').hidden = false;
+
+    var allNo = list[list.length - 1][1] === 'full refusal';
+    var ours = c.cmpId === UNREGISTERED_CMP_ID;
+    var older = c.cmpId === 0;
+    if (ours && allNo) {
+      setVerdict('yes', 'Yes. This browser is <span>refusing</span>.',
+        'BannerBye handed this page a valid consent string that says no to every purpose, every vendor and every special feature — before the page could ask.' + (gpc ? ' Global Privacy Control is on as well.' : ''),
+        null);
+    } else if (older && allNo) {
+      setVerdict('yes', 'Refusing — with an <span>older</span> string.',
+        'This BannerBye version still writes the pre-0.4.8 string: it says no everywhere, but strict decoders reject its shape (CMP id 0, global scope, no disclosed-vendors segment). Many sites accept it anyway and the other layers do the rest. Browsers update extensions on their own; nothing to do.',
+        null);
+    } else if (!ours && !older) {
+      setVerdict('no', 'Another consent tool answered first.',
+        'The string on this page was written by a registered consent platform, not by BannerBye. On this site that shouldn\'t happen — please report it.', null);
+    } else {
+      setVerdict('no', 'The string allows <span>something</span>.',
+        'This is a BannerBye string, but it isn\'t a full refusal. That is a bug on our side — please report this page.', null);
+    }
+  }
+
+  function liveCheck() {
+    var cookie = cookieString();
+    if (typeof window.__tcfapi !== 'function') {
+      finishLive(cookie, cookie ? 'Found in the euconsent-v2 cookie (no __tcfapi on this page):' : '');
+      return;
+    }
+    var done = false;
+    var t = setTimeout(function () {
+      if (done) return; done = true;
+      finishLive(cookie, cookie ? 'Found in the euconsent-v2 cookie (__tcfapi did not answer):' : '');
+    }, 2500);
+    try {
+      window.__tcfapi('getTCData', 2, function (data, ok) {
+        if (done) return; done = true; clearTimeout(t);
+        var s = ok && data && data.tcString ? String(data.tcString) : cookie;
+        finishLive(s, s === cookie && !(ok && data && data.tcString)
+          ? 'Found in the euconsent-v2 cookie:'
+          : 'Returned by window.__tcfapi(\'getTCData\') on this page' + (cookie === s ? ', and identical in the euconsent-v2 cookie:' : ':'));
+      });
+    } catch (e) {
+      done = true; clearTimeout(t);
+      finishLive(cookie, cookie ? 'Found in the euconsent-v2 cookie (__tcfapi threw):' : '');
+    }
+  }
+
+  /* ── paste decoder ───────────────────────────────────────────── */
+
+  document.getElementById('pasteForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var input = document.getElementById('pasteIn').value.trim();
+    var state = document.getElementById('pasteState');
+    var table = document.getElementById('pasteFields');
+    if (!input) { state.textContent = 'Paste a string first.'; table.hidden = true; return; }
+    try {
+      var dec = decode(input);
+      fillTable(document.getElementById('pasteBody'), rows(dec));
+      table.hidden = false;
+      state.textContent = dec.segments.length ? (dec.segments.length + 1) + ' segments decoded.' : 'Core segment only.';
+    } catch (e) {
+      table.hidden = true;
+      state.textContent = 'Can\'t decode that: ' + (e.message || e);
+    }
+  });
+
+  /* BannerBye installs __tcfapi at document_start, so it is already there
+     by the time this runs. A short delay covers slower content-script
+     injection on Safari. */
+  if (document.readyState === 'complete') setTimeout(liveCheck, 150);
+  else window.addEventListener('load', function () { setTimeout(liveCheck, 150); });
+})();
+</script>
+</body>
+</html>

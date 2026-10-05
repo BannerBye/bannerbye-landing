@@ -13,6 +13,7 @@ Free on Chrome, Firefox and Microsoft Edge. On Safari for iPhone, iPad and Mac i
 - [Home](https://bannerbye.com/): what it is, how it works, comparison table, FAQ
 - [Privacy policy](https://bannerbye.com/privacy)
 - [What we've fixed](https://bannerbye.com/fixed): a public, live log of user-reported sites and how long each fix took
+- [Signal check](https://bannerbye.com/tcf-check): live, in-browser decode of the IAB TCF consent string and GPC flag BannerBye sends to every site; also decodes any pasted TC string
 
 ## Comparisons
 
