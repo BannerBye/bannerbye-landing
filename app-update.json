@@ -1,0 +1,5 @@
+{
+  "_doc": "Read by the BannerBye app for iPhone, iPad and Mac to show an update notice. Contains no user data. on=true + latest newer than installed -> dismissible notice; minimum newer than installed -> required update.",
+  "ios":   { "on": false, "latest": "1.3.12", "minimum": "0" },
+  "macos": { "on": false, "latest": "1.3.12", "minimum": "0" }
+}

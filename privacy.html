@@ -39,7 +39,7 @@
   <div class="doc__head">
     <h1>We collect nothing. <span style="color:var(--color-ink-3)">That's the policy.</span></h1>
     <p class="doc__lede">BannerBye exists to keep cookie banners away from you. It would be a poor product if it tracked you while doing it. So it doesn't. This page explains exactly what the extension does, what it doesn't, and where the data lives.</p>
-    <p class="doc__meta">Last updated: 23 August 2026</p>
+    <p class="doc__meta">Last updated: 9 October 2026</p>
   </div>
 
   <article class="prose">
@@ -83,6 +83,7 @@
     <p>
     The request is a plain <code>GET</code>. It sends no extension ID, no user ID, no settings, no browsing data, no headers we control beyond what your browser adds for any HTTP request. The server logs the request the same way any web server logs any visitor: an IP address and a user agent string, retained briefly by the hosting provider for abuse protection. Those logs are not used by BannerBye for any purpose, are not joined with any other data, and are not shared.
     </p>
+      <p>The BannerBye app for iPhone, iPad and Mac (the app that installs the Safari extension, not the extension itself) fetches one more static file when you open it, at most once an hour: <code>https://bannerbye.com/app-update.json</code>. It lists the newest app version so the app can show an &ldquo;Update&rdquo; button when a newer one is in the App Store. Like the rules file, the request carries no app ID, no version number, no device ID and no cookies; the app compares versions on your device.</p>
 
     <h2>Report broken site (one-tap, opt-in)</h2>
     <p>
