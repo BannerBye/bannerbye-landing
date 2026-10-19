@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-30T16:06:34.945Z",
+  "updatedAt": "2026-10-19T21:01:03.716Z",
   "autoclick": {
     "rejectKeywords": [
       "reject additional cookies",
@@ -11,7 +11,9 @@
       "mit erforderlichen einstellungen fortfahren"
     ],
     "ambiguousKeywords": [],
-    "stepIntoKeywords": [],
+    "stepIntoKeywords": [
+      "learn more"
+    ],
     "rejectPhrases": [
       "hier ablehnen",
       "hier weigeren",
