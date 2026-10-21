@@ -204,7 +204,7 @@
   function setStatusRow(hostname, status) {
     var body = { hostname: hostname, status: status || null };
     if (status === 'not-a-bug') {
-      var note = window.prompt('Korte publieke uitleg (verschijnt in de popup van de melder):', 'This site asks you to pay or consent. That choice stays yours.');
+      var note = window.prompt('Notitie: code wall of accept-only (popup vertaalt die in 56 talen), of vrije Engelse tekst:', 'wall');
       if (note === null) { loadHosts(); return; }
       body.note = note;
     } else if (status === 'fixed') {
