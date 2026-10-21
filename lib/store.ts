@@ -498,3 +498,170 @@ export async function getStats(): Promise<{
     return { totalReports: 0, totalHosts: 0 };
   }
 }
+
+// ---------------------------------------------------------------------------
+// v0.4.12 (21 okt 2026) — anonieme terugkoppeling op meldingen via tickets.
+//
+// Een melding krijgt in de extensie een willekeurig ticket-ID dat alleen het
+// apparaat zelf bewaart. Hier slaan we per ticket ALLEEN de hostnaam op, en
+// per host een status. Er is dus niets om een ticket aan een persoon te
+// koppelen: geen e-mail, geen IP, geen device-ID. Het ticket vervangt op
+// termijn het e-mailveld, het enige persoonsgegeven in de meldflow.
+//
+//   bb:ticket:{id}        STRING  hostname, TTL 180d
+//   bb:host:status:{host} STRING(JSON) {status,note,version,ts}, TTL 180d
+//
+// Statusbepaling (zie resolveTicketStatus): een expliciete host-status wint;
+// anders geldt een vermelding in bb:fixed als 'fixed'; anders 'received'.
+// Zo krijgen keyword-fixes uit de pijplijn en codefixes uit fixed-sites.json
+// hun status gratis — alleen 'investigating' en 'not-a-bug' vragen een
+// expliciete zet (pijplijn of /admin).
+// ---------------------------------------------------------------------------
+
+export type TicketStatus = 'received' | 'investigating' | 'fixed' | 'not-a-bug';
+
+export interface HostStatus {
+  status: TicketStatus;
+  /** Korte, publieke uitleg (max 200 tekens). Bij 'not-a-bug' verplicht. */
+  note?: string;
+  /** Extensieversie waarin een codefix zit; leeg bij een keyword-fix. */
+  version?: string;
+  ts: number;
+}
+
+export interface TicketStatusResult extends HostStatus {
+  hostname: string;
+}
+
+export const TICKET_ID_RE = /^[a-z0-9]{4}-[a-z0-9]{4}$/;
+export const TICKET_STATUSES: TicketStatus[] = ['received', 'investigating', 'fixed', 'not-a-bug'];
+
+/** Koppel een ticket aan een hostname. Best-effort, gooit nooit. */
+export async function registerTicket(id: string, hostname: string): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis || !TICKET_ID_RE.test(id)) return false;
+  try {
+    // NX: een bestaand ticket wordt nooit overschreven (anders kon een derde
+    // met een geraden ID de koppeling van iemand anders verleggen).
+    await redis.set(`bb:ticket:${id}`, hostname, { ex: REPORT_TTL_SECONDS, nx: true });
+    return true;
+  } catch (err) {
+    console.error('[store] registerTicket failed:', err);
+    return false;
+  }
+}
+
+/** Zet (of wis, met status null) de expliciete status van een host. */
+export async function setHostStatus(
+  hostname: string,
+  status: TicketStatus | null,
+  note?: string,
+  version?: string,
+): Promise<boolean> {
+  const redis = getRedis();
+  if (!redis) return false;
+  try {
+    const key = `bb:host:status:${hostname}`;
+    if (!status) {
+      await redis.del(key);
+      return true;
+    }
+    const record: HostStatus = {
+      status,
+      note: (note ?? '').slice(0, 200).trim() || undefined,
+      version: (version ?? '').slice(0, 16).trim() || undefined,
+      ts: Date.now(),
+    };
+    await redis.set(key, record, { ex: REPORT_TTL_SECONDS });
+    return true;
+  } catch (err) {
+    console.error('[store] setHostStatus failed:', err);
+    return false;
+  }
+}
+
+/** Status van één host, met bb:fixed als terugval. */
+export async function getHostStatus(hostname: string): Promise<HostStatus> {
+  const redis = getRedis();
+  const fallback: HostStatus = { status: 'received', ts: 0 };
+  if (!redis) return fallback;
+  try {
+    const explicit = (await redis.get(`bb:host:status:${hostname}`)) as HostStatus | null;
+    if (explicit && TICKET_STATUSES.includes(explicit.status)) return explicit;
+    const fixedAt = await redis.zscore('bb:fixed', hostname);
+    if (fixedAt !== null && fixedAt !== undefined) {
+      const meta = (await redis.get(`bb:fixed:meta:${hostname}`)) as
+        | { version?: string; keyword?: string }
+        | null;
+      return {
+        status: 'fixed',
+        version: meta?.version || undefined,
+        note: meta?.version ? undefined : 'Fixed through the rule list — no update needed.',
+        ts: Number(fixedAt),
+      };
+    }
+    return fallback;
+  } catch (err) {
+    console.error('[store] getHostStatus failed:', err);
+    return fallback;
+  }
+}
+
+/**
+ * Status voor een lijst tickets. Onbekende of ongeldige ID's worden stil
+ * overgeslagen — het antwoord verraadt nooit óf een ID bestaat behalve via
+ * de aanwezigheid van zijn eigen hostname, en die kent de vrager al.
+ */
+export async function resolveTicketStatus(
+  ids: string[],
+): Promise<Record<string, TicketStatusResult>> {
+  const redis = getRedis();
+  const out: Record<string, TicketStatusResult> = {};
+  if (!redis) return out;
+  const valid = ids.filter((id) => TICKET_ID_RE.test(id)).slice(0, 20);
+  if (!valid.length) return out;
+  try {
+    const hosts = (await redis.mget<(string | null)[]>(
+      ...valid.map((id) => `bb:ticket:${id}`),
+    )) ?? [];
+    const statusCache = new Map<string, HostStatus>();
+    for (let i = 0; i < valid.length; i++) {
+      const host = hosts[i];
+      if (!host || typeof host !== 'string') continue;
+      let st = statusCache.get(host);
+      if (!st) {
+        st = await getHostStatus(host);
+        statusCache.set(host, st);
+      }
+      out[valid[i]!] = { hostname: host, ...st };
+    }
+  } catch (err) {
+    console.error('[store] resolveTicketStatus failed:', err);
+  }
+  return out;
+}
+
+/** Batch-variant van getHostStatus voor /admin (hosts-overzicht). */
+export async function getHostStatuses(
+  hosts: string[],
+): Promise<Record<string, HostStatus>> {
+  const redis = getRedis();
+  const out: Record<string, HostStatus> = {};
+  if (!redis || !hosts.length) return out;
+  try {
+    const p = redis.pipeline();
+    hosts.forEach((h) => p.get(`bb:host:status:${h}`));
+    hosts.forEach((h) => p.zscore('bb:fixed', h));
+    const r = (await p.exec()) as unknown[];
+    hosts.forEach((h, i) => {
+      const explicit = r[i] as HostStatus | null;
+      const fixedAt = r[hosts.length + i] as number | null;
+      if (explicit && TICKET_STATUSES.includes(explicit.status)) out[h] = explicit;
+      else if (fixedAt !== null && fixedAt !== undefined) out[h] = { status: 'fixed', ts: Number(fixedAt) };
+      else out[h] = { status: 'received', ts: 0 };
+    });
+  } catch (err) {
+    console.error('[store] getHostStatuses failed:', err);
+  }
+  return out;
+}

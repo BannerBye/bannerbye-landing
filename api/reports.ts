@@ -40,6 +40,11 @@ import {
   deleteReport,
   getRateLimitCount,
   bumpRateLimit,
+  setHostStatus,
+  getHostStatus,
+  getHostStatuses,
+  TICKET_STATUSES,
+  type TicketStatus,
 } from '../lib/store.js';
 
 // Max 20 mislukte pogingen per IP per 15 minuten. Ruim genoeg voor een
@@ -85,7 +90,7 @@ export default async function handler(
 ): Promise<void> {
   res.setHeader('Cache-Control', 'no-store');
 
-  if (req.method !== 'GET' && req.method !== 'DELETE') {
+  if (req.method !== 'GET' && req.method !== 'DELETE' && req.method !== 'PUT') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
@@ -119,6 +124,31 @@ export default async function handler(
 
   if (!storageEnabled()) {
     res.status(503).json({ error: 'Storage not configured' });
+    return;
+  }
+
+  // ---- PUT: expliciete fix-status van een host (v0.4.12, ticket-terugkoppeling) ----
+  // body: { hostname, status: received|investigating|fixed|not-a-bug|null, note?, version? }
+  if (req.method === 'PUT') {
+    const b = (req.body ?? {}) as { hostname?: unknown; status?: unknown; note?: unknown; version?: unknown };
+    const hostnameRaw = String(b.hostname ?? '').toLowerCase().trim();
+    if (!/^[a-z0-9.-]+$/.test(hostnameRaw)) {
+      res.status(400).json({ error: 'Missing or invalid hostname' });
+      return;
+    }
+    const status = b.status === null || b.status === '' ? null : String(b.status);
+    if (status !== null && !(TICKET_STATUSES as string[]).includes(status)) {
+      res.status(400).json({ error: 'Invalid status' });
+      return;
+    }
+    const note = typeof b.note === 'string' ? b.note : '';
+    const version = typeof b.version === 'string' ? b.version : '';
+    if (status === 'not-a-bug' && !note.trim()) {
+      res.status(400).json({ error: 'not-a-bug requires a note' });
+      return;
+    }
+    const ok = await setHostStatus(hostnameRaw, status as TicketStatus | null, note, version);
+    res.status(ok ? 200 : 500).json({ ok, status: await getHostStatus(hostnameRaw) });
     return;
   }
 
@@ -165,7 +195,10 @@ export default async function handler(
       const hosts = await listHostSummary({
         limit: Number.isNaN(limit) ? undefined : limit,
       });
-      res.status(200).json({ view: 'hosts', count: hosts.length, hosts });
+      // v0.4.12: fix-status per host erbij (ticket-terugkoppeling).
+      const statuses = await getHostStatuses(hosts.map((h) => h.hostname));
+      const withStatus = hosts.map((h) => ({ ...h, status: statuses[h.hostname] ?? { status: 'received', ts: 0 } }));
+      res.status(200).json({ view: 'hosts', count: hosts.length, hosts: withStatus });
       return;
     }
     // default: reports

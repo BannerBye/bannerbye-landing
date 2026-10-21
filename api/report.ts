@@ -18,7 +18,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { persistReport, addWatcher, isOverRateLimit } from '../lib/store.js';
+import { persistReport, addWatcher, isOverRateLimit, registerTicket, TICKET_ID_RE } from '../lib/store.js';
 
 // We gebruiken Resend's REST API direct via fetch — geen SDK-dependency.
 // Reden: resend@4.x is ESM-only en geeft FUNCTION_INVOCATION_FAILED in
@@ -251,11 +251,17 @@ export default async function handler(
     version?: unknown;
     message?: unknown;
     email?: unknown;
+    ticket?: unknown;
   };
   const hostname = validHostname(body.hostname);
   const version = sanitize(body.version, 32);
   const message = sanitize(body.message, 2000);
   const email = validEmail(body.email); // null = geen/ongeldig = anoniem
+  // v0.4.12: anoniem ticket-ID, door de extensie zelf gemaakt en alleen daar
+  // bewaard. Koppelt het apparaat aan de fix-status van déze site, zonder
+  // dat wij weten welk apparaat. Zie lib/store.ts.
+  const ticketRaw = sanitize(body.ticket, 16).toLowerCase();
+  const ticket = TICKET_ID_RE.test(ticketRaw) ? ticketRaw : null;
 
   if (!hostname) {
     res.status(400).json({ error: 'Invalid hostname' });
@@ -289,7 +295,7 @@ export default async function handler(
       `IP:       ${ip}`,
       `UA:       ${userAgent}`,
       `Time:     ${new Date(now).toISOString()}`,
-      `Notify:   ${email ? `${email} (opted in — will be emailed when fixed)` : 'no (anonymous)'}`,
+      `Notify:   ${email ? `${email} (opted in — will be emailed when fixed)` : ticket ? `ticket ${ticket} (anonymous, via popup)` : 'no (anonymous)'}`,
       ``,
       `--- User message ---`,
       message || '(no additional context)',
@@ -338,6 +344,8 @@ export default async function handler(
     ts: now,
   });
 
+  if (ticket) await registerTicket(ticket, hostname);
+
   // Phase 2C (#reward-3): opt-in "email me when fixed". Best-effort; een fout
   // hier mag de melding nooit laten klappen. Alleen bij een geldig adres.
   if (email) {
@@ -356,5 +364,5 @@ export default async function handler(
   // response, want een serverless function kan na res.json() bevriezen.
   await triggerAnalysis(hostname);
 
-  res.status(200).json({ ok: true });
+  res.status(200).json({ ok: true, ticket });
 }

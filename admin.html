@@ -189,6 +189,51 @@
     });
   }
 
+  // v0.4.12: fix-status per host (anonieme ticket-terugkoppeling in de popup).
+  function apiPutStatus(body) {
+    return fetch('/api/reports', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + state.token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(function (r) {
+      if (!r.ok) { throw { code: r.status }; }
+      return r.json();
+    });
+  }
+
+  function setStatusRow(hostname, status) {
+    var body = { hostname: hostname, status: status || null };
+    if (status === 'not-a-bug') {
+      var note = window.prompt('Korte publieke uitleg (verschijnt in de popup van de melder):', 'This site asks you to pay or consent. That choice stays yours.');
+      if (note === null) { loadHosts(); return; }
+      body.note = note;
+    } else if (status === 'fixed') {
+      var ver = window.prompt('Gefixt in extensieversie (leeg = via de regellijst, geen update nodig):', '');
+      if (ver === null) { loadHosts(); return; }
+      body.version = ver;
+    } else if (status === 'investigating') {
+      body.note = 'We are looking into it.';
+    }
+    apiPutStatus(body).then(function () { loadHosts(); })
+      .catch(function () { window.alert('Status opslaan mislukt.'); loadHosts(); });
+  }
+
+  function wireStatusSelects() {
+    var sels = el('panel').querySelectorAll('select.st');
+    Array.prototype.forEach.call(sels, function (sel) {
+      sel.onchange = function () { setStatusRow(sel.getAttribute('data-host'), sel.value); };
+    });
+  }
+
+  function statusCell(r) {
+    var st = (r.status && r.status.status) || 'received';
+    var opts = ['received', 'investigating', 'fixed', 'not-a-bug'].map(function (o) {
+      return '<option value="' + o + '"' + (o === st ? ' selected' : '') + '>' + o + '</option>';
+    }).join('');
+    var extra = r.status && (r.status.version ? ' v' + esc(r.status.version) : (r.status.note ? ' · ' + esc(r.status.note) : ''));
+    return '<td class="ver"><select class="st" data-host="' + esc(r.hostname) + '">' + opts + '</select>' + (extra || '') + '</td>';
+  }
+
   function deleteHostRow(hostname) {
     if (!window.confirm('Alle meldingen van ' + hostname + ' verwijderen?')) return;
     apiDelete({ hostname: hostname }).then(function () {
@@ -278,6 +323,7 @@
       { key: 'count', label: 'Reports' },
       { key: 'lastTs', label: 'Last report' },
       { key: 'lastVersion', label: 'Version' },
+      { key: 'status', label: 'Status' },
     ];
     var rows = state.rows.filter(function (r) {
       return !state.filter || r.hostname.indexOf(state.filter) !== -1;
@@ -293,6 +339,7 @@
         '<td class="count">' + r.count + '</td>' +
         '<td>' + esc(fmtDate(r.lastTs)) + '</td>' +
         '<td class="ver">' + esc(r.lastVersion || '—') + '</td>' +
+        statusCell(r) +
         '<td class="act"><button class="del" data-delhost="' + esc(r.hostname) + '" title="Alle meldingen van deze site verwijderen">✕</button></td>' +
         '</tr>';
     }).join('');
@@ -301,6 +348,7 @@
     wireHostLinks();
     wireSort();
     wireDeleteButtons();
+    wireStatusSelects();
   }
 
   function renderReports() {
