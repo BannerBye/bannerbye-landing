@@ -93,7 +93,9 @@
       "duration": "PT30S",
       "inLanguage": "en",
       "isFamilyFriendly": true,
-      "publisher": { "@id": "https://bannerbye.com/#org" }
+      "publisher": {
+        "@id": "https://bannerbye.com/#org"
+      }
     },
     {
       "@type": "FAQPage",
@@ -137,6 +139,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "It handles the vast majority of cookie banners through three independent layers: GPC (legally binding in several US states), IAB TCF reject (used by most major European publishers), and a pattern-based auto-click for custom banners. For the rare website where it doesn't work, one tap on “Report broken site” in the popup tells us. Our daily-updated rule list reaches every user within hours — no extension update needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use BannerBye with an ad blocker?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Ad blockers block ads and trackers; BannerBye refuses consent. Different jobs, no conflict. The GPC header and the TCF reject string are set before the page loads, whatever else is installed. One thing to know: some blockers (Wipr 2, AdGuard, uBlock Origin with the “cookie notices” lists) also hide cookie banners. Hiding is not refusing — the site still treats you as undecided or, worse, as consented. And if the blocker hides the banner first, BannerBye's popup may say “Nothing to refuse here yet” on that site, because there was no banner left to refuse. If your blocker has a cookie-notice option, turn it off and let BannerBye do the refusing. If it doesn't, nothing breaks — you just lose the proof line on some sites."
           }
         },
         {
@@ -498,6 +508,14 @@
         <div class="faq__a">
           <p>It handles the vast majority of cookie banners through three independent layers: GPC (legally binding in several US states), IAB TCF reject (used by most major European publishers), and a pattern-based auto-click for custom banners.</p>
           <p>For the rare website where it doesn't work, one tap on “Report broken site” in the popup tells us. Our daily-updated rule list reaches every user within hours — no extension update needed.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Can I use BannerBye with an ad blocker?</summary>
+        <div class="faq__a">
+          <p>Yes. Ad blockers block ads and trackers; BannerBye refuses consent. Different jobs, no conflict. The GPC header and the TCF reject string are set before the page loads, whatever else is installed.</p>
+          <p>One thing to know: some blockers (Wipr 2, AdGuard, uBlock Origin with the “cookie notices” lists) also <em>hide</em> cookie banners. Hiding is not refusing — the site still treats you as undecided or, worse, as consented. And if the blocker hides the banner first, BannerBye's popup may say “Nothing to refuse here yet” on that site, because there was no banner left to refuse.</p>
+          <p>If your blocker has a cookie-notice option, turn it off and let BannerBye do the refusing. If it doesn't, nothing breaks — you just lose the proof line on some sites.</p>
         </div>
       </details>
 
