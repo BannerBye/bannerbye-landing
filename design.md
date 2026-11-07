@@ -10,7 +10,7 @@ multi-page sites: here consistency *is* the goal.
 |---|---|
 | Genre | modern-minimal |
 | Theme | BannerBye brand, preserved (cream / ink / ember / smoke) |
-| Display face | Space Grotesk 500/600/700 |
+| Display face | Space Grotesk 500/600 (700 dropped 7 Nov 2026) |
 | Body face | Inter 400/500/600 |
 | Mono face | JetBrains Mono 500 |
 | Macrostructure — marketing pages | 15 · Split Studio (diptych, alternating) |
@@ -73,3 +73,24 @@ visible FAQ text — Google requires it.
 
 > The film sits **under** the hero, never in it. Rule 1 stands: the hero
 > proof is the refusal ledger, not a video.
+
+## Polish pass — 7 Nov 2026 (unslop)
+
+Audit against the unslop sign list; the system itself stayed. What changed, and
+stays changed:
+
+- Spacing lives on the 4px scale (`.5/.75/1rem`); no `.4/.45/.55/.6/.7/.85/.9rem`.
+- Weight 600 is the heaviest anywhere (h1, wordmark, numerals, table head, close, footer).
+- Negative letter-spacing only on display sizes (`h1–h4`, `.count__big`, `.loop__out`,
+  `.foot__say`). Never on buttons, the wordmark, FAQ questions or table heads.
+- No uppercase labels with wide tracking: ledger cap, comparison head, loop labels,
+  doc meta, prose `th`, stat labels, breadcrumb and 404 code are sentence case on
+  `--text-xs`. The loop shows only `01 / 02 / 03`; the h3 carries the word.
+- Hero: one primary and one secondary button; the third store is a link in the fine
+  line (`data-install="alt-b"` on an `<a>`, `install.js` unchanged).
+- Nav links show from 58rem (was 52rem) with `--space-sm` gaps, so they never wrap.
+- Section `h2`s end without a period. Brand lines keep theirs: the h1
+  ("Cookie banners, killed. / Before they load."), the closing "Bye bye cookie
+  banners." and the footer statement.
+- "AI-driven" / "AI-vetted" copy replaced by what happens: fixes ship within hours,
+  Claude checks each before it goes live.
