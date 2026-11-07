@@ -89,8 +89,8 @@ stays changed:
 - Hero: one primary and one secondary button; the third store is a link in the fine
   line (`data-install="alt-b"` on an `<a>`, `install.js` unchanged).
 - Nav links show from 58rem (was 52rem) with `--space-sm` gaps, so they never wrap.
-- Section `h2`s end without a period. Brand lines keep theirs: the h1
-  ("Cookie banners, killed. / Before they load."), the closing "Bye bye cookie
-  banners." and the footer statement.
+- Headings keep their full stops. They are written as sentences ("Most banner
+  tools hide. BannerBye refuses.") and the brand voice pauses with periods;
+  dropping only the last one (tried 7 Nov) read as a typo.
 - "AI-driven" / "AI-vetted" copy replaced by what happens: fixes ship within hours,
   Claude checks each before it goes live.
