@@ -1,0 +1,13 @@
+{
+  "_doc": "SUPERSEDED 2026-11-07: /app-update.json is now served by api/app-update.ts (live App Store versions). This file is only a fallback reference. Read by the BannerBye app for iPhone, iPad and Mac to show an update notice. Contains no user data. on=true + latest newer than installed -> dismissible notice; minimum newer than installed -> required update.",
+  "ios": {
+    "on": true,
+    "latest": "1.3.18",
+    "minimum": "0"
+  },
+  "macos": {
+    "on": true,
+    "latest": "1.3.18",
+    "minimum": "0"
+  }
+}
