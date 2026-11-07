@@ -587,8 +587,17 @@ export async function getHostStatus(hostname: string): Promise<HostStatus> {
   if (!redis) return fallback;
   try {
     const explicit = (await redis.get(`bb:host:status:${hostname}`)) as HostStatus | null;
-    if (explicit && TICKET_STATUSES.includes(explicit.status)) return explicit;
     const fixedAt = await redis.zscore('bb:fixed', hostname);
+    // v0.4.15 (7 nov 2026): een fix die ná de expliciete status is gepubliceerd
+    // (keyword via promotePendingFixes, codefix via publish-fixed) wint van
+    // 'received'/'investigating'. Zo verloopt de status vanzelf naar 'fixed'
+    // zodra de fix live is, zonder /admin. 'not-a-bug' en een expliciete
+    // 'fixed' blijven staan.
+    if (explicit && TICKET_STATUSES.includes(explicit.status)) {
+      const fixedLater =
+        fixedAt !== null && fixedAt !== undefined && Number(fixedAt) >= (explicit.ts || 0);
+      if (!fixedLater || explicit.status === 'not-a-bug' || explicit.status === 'fixed') return explicit;
+    }
     if (fixedAt !== null && fixedAt !== undefined) {
       const meta = (await redis.get(`bb:fixed:meta:${hostname}`)) as
         | { version?: string; keyword?: string }
@@ -656,8 +665,12 @@ export async function getHostStatuses(
     hosts.forEach((h, i) => {
       const explicit = r[i] as HostStatus | null;
       const fixedAt = r[hosts.length + i] as number | null;
-      if (explicit && TICKET_STATUSES.includes(explicit.status)) out[h] = explicit;
-      else if (fixedAt !== null && fixedAt !== undefined) out[h] = { status: 'fixed', ts: Number(fixedAt) };
+      const hasFix = fixedAt !== null && fixedAt !== undefined;
+      const explicitValid = !!explicit && TICKET_STATUSES.includes(explicit.status);
+      const fixedLater =
+        hasFix && (!explicitValid || Number(fixedAt) >= (explicit!.ts || 0));
+      if (explicitValid && (!fixedLater || explicit!.status === 'not-a-bug' || explicit!.status === 'fixed')) out[h] = explicit!;
+      else if (hasFix) out[h] = { status: 'fixed', ts: Number(fixedAt) };
       else out[h] = { status: 'received', ts: 0 };
     });
   } catch (err) {
