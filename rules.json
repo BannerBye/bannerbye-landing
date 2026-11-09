@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-04T17:08:21.000Z",
+  "updatedAt": "2026-11-09T12:21:38.000Z",
   "autoclick": {
     "rejectKeywords": [
       "reject additional cookies",
@@ -104,7 +104,12 @@
       "сохранить и закрыть",
       "подтвердить",
       "подтвердить выбор",
-      "подтвердить мой выбор"
+      "подтвердить мой выбор",
+      "confirm current selection",
+      "confirm selection",
+      "confirm settings",
+      "confirm preferences",
+      "save current selection"
     ],
     "stepIntoKeywords": [
       "настроить файлы cookie",
@@ -113,7 +118,11 @@
       "настройки файлов cookie",
       "управление файлами cookie",
       "больше опций",
-      "дополнительные настройки"
+      "дополнительные настройки",
+      "manage cookie settings",
+      "manage cookie preferences",
+      "manage my cookie settings",
+      "manage my cookies"
     ],
     "rejectPhrases": [
       "hier ablehnen",
