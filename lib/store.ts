@@ -36,6 +36,32 @@ export interface StoredReport {
   ua: string;
   message: string;
   ts: number;
+  /**
+   * v0.4.17 (pijplijn v2) — context van de melder, allemaal optioneel en
+   * server-side opnieuw gevalideerd in api/report.ts. `path` is opgeschoond
+   * (geen query/hash, tokens weggepoetst); `snapshot` bevat alleen zichtbare
+   * knoplabels in/rond de cookie-banner, een stukje bannertekst, CMP-namen en
+   * consent-iframe-hostnamen; `trace` is de popup-trace (hostnamen + labels).
+   */
+  path?: string;
+  lang?: string;
+  snapshot?: ReportSnapshot;
+  trace?: string;
+}
+
+/** Spiegel van `ReportSnapshot` in de extensie (src/lib/report-snapshot.ts). */
+export interface ReportSnapshot {
+  v: number;
+  at: number;
+  candidates: Array<{ text: string; tag: string; inBanner: boolean; attrs?: string[] }>;
+  bannerFound: boolean;
+  bannerText: string;
+  cmps: string[];
+  iframes: string[];
+  pageLang: string;
+  uiLang: string;
+  viewport: { w: number; h: number };
+  totalClickables: number;
 }
 
 export interface HostSummary {

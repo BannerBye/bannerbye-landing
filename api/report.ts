@@ -2,7 +2,10 @@
  * BannerBye — auto-submit report endpoint (Phase 1, v0.2.0)
  *
  * POST /api/report
- *   body: { hostname: string, version: string, message?: string }
+ *   body: { hostname: string, version: string, message?: string, ticket?: string,
+ *           v?: 2, path?: string, lang?: string, snapshot?: ReportSnapshot, trace?: string }
+ *   (v0.4.17 — pijplijn v2: path/lang/snapshot/trace zijn optioneel en worden
+ *    hier opnieuw gevalideerd en begrensd; zie validSnapshot() hieronder.)
  *   responses:
  *     200 { ok: true }      — verstuurd
  *     400 { error: "..." }  — invalid payload
@@ -18,7 +21,14 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { persistReport, addWatcher, isOverRateLimit, registerTicket, TICKET_ID_RE } from '../lib/store.js';
+import {
+  persistReport,
+  addWatcher,
+  isOverRateLimit,
+  registerTicket,
+  TICKET_ID_RE,
+  type ReportSnapshot,
+} from '../lib/store.js';
 
 // We gebruiken Resend's REST API direct via fetch — geen SDK-dependency.
 // Reden: resend@4.x is ESM-only en geeft FUNCTION_INVOCATION_FAILED in
@@ -216,6 +226,94 @@ function validHostname(value: unknown): string | null {
   return trimmed;
 }
 
+// ---------------------------------------------------------------------------
+// v0.4.17 (pijplijn v2) — context van de melder. Alles optioneel, alles
+// opnieuw begrensd: de extensie poetst zelf al, maar deze endpoint is publiek
+// en de payload kan van iedereen komen. Harde maxima houden Redis klein en
+// de analyse-prompt veilig (claude.ts wikkelt alles in een untrusted-blok).
+// ---------------------------------------------------------------------------
+const SNAP_MAX_CANDIDATES = 40;
+const SNAP_MAX_LABEL = 160;
+const SNAP_MAX_BANNER = 400;
+const SNAP_MAX_ATTRS = 12;
+const SNAP_MAX_LIST = 8;
+const SNAP_MAX_JSON = 16 * 1024;
+
+/** Pad opnieuw opschonen: alleen een pad, geen query/hash, tokens weg. */
+function validPath(value: unknown): string {
+  if (typeof value !== 'string') return '/';
+  let p = value.trim();
+  if (!p.startsWith('/') || p.length > 200) return '/';
+  p = p.split(/[?#]/)[0]!;
+  if (!/^[A-Za-z0-9/_\-.~%*]*$/.test(p)) return '/';
+  const parts = p.split('/').map((seg) => {
+    if (!seg) return seg;
+    if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg)) return '*';
+    if (/^\d{4,}$/.test(seg)) return '*';
+    if (seg.length >= 24 && /\d/.test(seg)) return '*';
+    return seg;
+  });
+  return parts.join('/').replace(/\/{2,}/g, '/') || '/';
+}
+
+function validLang(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  const v = value.trim();
+  return /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/.test(v) ? v.slice(0, 16) : '';
+}
+
+function strList(value: unknown, maxItems: number, maxLen: number, re?: RegExp): string[] {
+  if (!Array.isArray(value)) return [];
+  const out: string[] = [];
+  for (const v of value) {
+    if (typeof v !== 'string') continue;
+    const s = sanitize(v, maxLen);
+    if (!s || (re && !re.test(s))) continue;
+    if (!out.includes(s)) out.push(s);
+    if (out.length >= maxItems) break;
+  }
+  return out;
+}
+
+/** Snapshot valideren en inkorten. Null bij onzin — de melding gaat dan zonder. */
+function validSnapshot(value: unknown): ReportSnapshot | null {
+  if (!value || typeof value !== 'object') return null;
+  try {
+    if (JSON.stringify(value).length > SNAP_MAX_JSON) return null;
+  } catch {
+    return null;
+  }
+  const o = value as Record<string, unknown>;
+  const rawCands = Array.isArray(o.candidates) ? o.candidates : [];
+  const candidates: ReportSnapshot['candidates'] = [];
+  for (const c of rawCands) {
+    if (!c || typeof c !== 'object') continue;
+    const cc = c as Record<string, unknown>;
+    const text = sanitize(cc.text, SNAP_MAX_LABEL);
+    if (!text) continue;
+    const tag = sanitize(cc.tag, 24).toLowerCase().replace(/[^a-z0-9-]/g, '') || 'unknown';
+    const attrs = strList(cc.attrs, SNAP_MAX_ATTRS, 32, /^[a-z0-9]+$/);
+    candidates.push({ text, tag, inBanner: cc.inBanner === true, ...(attrs.length ? { attrs } : {}) });
+    if (candidates.length >= SNAP_MAX_CANDIDATES) break;
+  }
+  const vp = (o.viewport && typeof o.viewport === 'object' ? o.viewport : {}) as Record<string, unknown>;
+  const num = (v: unknown, max: number): number =>
+    typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= max ? Math.round(v) : 0;
+  return {
+    v: num(o.v, 99) || 1,
+    at: num(o.at, 9e15),
+    candidates,
+    bannerFound: o.bannerFound === true,
+    bannerText: sanitize(o.bannerText, SNAP_MAX_BANNER),
+    cmps: strList(o.cmps, SNAP_MAX_LIST, 40),
+    iframes: strList(o.iframes, SNAP_MAX_LIST, 253, /^[a-z0-9.-]+$/).filter((h) => !isDeniedHostname(h)),
+    pageLang: validLang(o.pageLang),
+    uiLang: validLang(o.uiLang),
+    viewport: { w: num(vp.w, 20000), h: num(vp.h, 20000) },
+    totalClickables: num(o.totalClickables, 100000),
+  };
+}
+
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
@@ -252,6 +350,11 @@ export default async function handler(
     message?: unknown;
     email?: unknown;
     ticket?: unknown;
+    v?: unknown;
+    path?: unknown;
+    lang?: unknown;
+    snapshot?: unknown;
+    trace?: unknown;
   };
   const hostname = validHostname(body.hostname);
   const version = sanitize(body.version, 32);
@@ -262,6 +365,11 @@ export default async function handler(
   // dat wij weten welk apparaat. Zie lib/store.ts.
   const ticketRaw = sanitize(body.ticket, 16).toLowerCase();
   const ticket = TICKET_ID_RE.test(ticketRaw) ? ticketRaw : null;
+  // v0.4.17 (pijplijn v2): context van de melder — zie validators hierboven.
+  const path = validPath(body.path);
+  const lang = validLang(body.lang);
+  const snapshot = validSnapshot(body.snapshot);
+  const trace = sanitize(body.trace, 2000);
 
   if (!hostname) {
     res.status(400).json({ error: 'Invalid hostname' });
@@ -296,10 +404,24 @@ export default async function handler(
       `UA:       ${userAgent}`,
       `Time:     ${new Date(now).toISOString()}`,
       `Notify:   ${email ? `${email} (opted in — will be emailed when fixed)` : ticket ? `ticket ${ticket} (anonymous, via popup)` : 'no (anonymous)'}`,
+      `Path:     ${path}${lang ? `   Lang: ${lang}` : ''}`,
       ``,
       `--- User message ---`,
       message || '(no additional context)',
       ``,
+      ...(snapshot
+        ? [
+            `--- What the reporter saw (snapshot v${snapshot.v}) ---`,
+            `Banner container found by extension: ${snapshot.bannerFound ? 'yes' : 'no'} · viewport ${snapshot.viewport.w}×${snapshot.viewport.h} · page lang ${snapshot.pageLang || '-'}`,
+            `CMP signatures: ${snapshot.cmps.join(', ') || '-'} · consent iframes: ${snapshot.iframes.join(', ') || '-'}`,
+            `Buttons (${snapshot.candidates.length}): ${
+              snapshot.candidates.map((c) => `${c.inBanner ? '●' : '○'} "${c.text}"`).join('  ') || '-'
+            }`,
+            snapshot.bannerText ? `Banner text: ${snapshot.bannerText}` : '',
+            ``,
+          ].filter((l) => l !== '')
+        : []),
+      ...(trace ? [`--- Trace ---`, trace, ``] : []),
       `---`,
       `Reported via BannerBye extension`,
     ];
@@ -342,6 +464,10 @@ export default async function handler(
     ua: userAgentForStore,
     message,
     ts: now,
+    path,
+    ...(lang ? { lang } : {}),
+    ...(snapshot ? { snapshot } : {}),
+    ...(trace ? { trace } : {}),
   });
 
   if (ticket) await registerTicket(ticket, hostname);
