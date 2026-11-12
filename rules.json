@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-09T12:21:38.000Z",
+  "updatedAt": "2026-11-12T19:37:46.541Z",
   "autoclick": {
     "rejectKeywords": [
       "reject additional cookies",
@@ -128,6 +128,13 @@
       "hier ablehnen",
       "hier weigeren",
       "refuse them here"
-    ]
+    ],
+    "hostRules": {
+      "nl.pepper.com": {
+        "stepIntoKeywords": [
+          "cookievoorkeuren"
+        ]
+      }
+    }
   }
 }
