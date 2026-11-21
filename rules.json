@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-18T23:36:26.000Z",
+  "updatedAt": "2026-11-21T23:40:00.000Z",
   "autoclick": {
     "rejectKeywords": [
       "reject additional cookies",
@@ -103,7 +103,14 @@
       "nur technisch notwendige cookies akzeptieren",
       "notwendige cookies akzeptieren",
       "nur notwendige cookies zulassen",
-      "nur notwendige zulassen"
+      "nur notwendige zulassen",
+      "je n'accepte rien",
+      "je n’accepte rien",
+      "refuser les cookies optionnels",
+      "refuser les cookies facultatifs",
+      "refuser et fermer",
+      "refuser & fermer",
+      "continuer sans accepter →"
     ],
     "ambiguousKeywords": [
       "сохранить и применить",

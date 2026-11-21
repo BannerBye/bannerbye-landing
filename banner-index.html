@@ -141,6 +141,7 @@
     <div class="verdict">
       <h2>Method.</h2>
       <p>The crawler is open source: <a href="https://github.com/BannerBye/BannerBye/tree/main/scripts/index">scripts/index</a> in the BannerBye repository, with the fixed site list in <code>sites.json</code>. It runs from a Dutch connection, with the browser language set to the site's country. Sites that block automated browsers show up as errors and are left out of the percentages.</p>
+      <p>Every result is then checked by hand against the buttons the page actually showed. Where the hand check differs from the crawler, the hand check wins and the data file says so: <a href="/banner-index.json">banner-index.json</a>.</p>
       <p>A reject button counts when its label matches the same reject words the BannerBye extension uses, in the site's language. A pay-or-consent wall counts when there's a pay or subscribe button next to an accept button and no free way to refuse.</p>
     </div>
   </section>
@@ -199,7 +200,7 @@
   var NAMES = { NL: 'Netherlands', DE: 'Germany', FR: 'France', BE: 'Belgium' };
   fetch('/banner-index.json').then(function (r) { return r.json(); }).then(function (data) {
     var rows = (data.rows || []).filter(function (r) { return r.engine !== 'error'; });
-    var pilot = data.pilot ? 'Pilot measurement, still being checked by hand · ' : '';
+    var pilot = data.pilot ? 'Pilot measurement, still being checked by hand · ' : (data.checkedByHand ? 'Checked by hand · ' : '');
     document.getElementById('bi-date').textContent = pilot + 'Measured ' + new Date(data.measuredAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · ' + rows.length + ' sites reached';
     var sum = '';
     Object.keys(NAMES).forEach(function (c) {

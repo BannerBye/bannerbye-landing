@@ -1,7 +1,7 @@
 {
  "measuredAt": "2026-11-21T20:43:32.296Z",
  "method": "https://bannerbye.com/banner-index#method",
- "pilot": true,
+ "pilot": false,
  "rows": [
   {
    "country": "NL",
@@ -115,9 +115,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1531
+   "ms": 1531,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "NL",
@@ -159,9 +160,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1534
+   "ms": 1534,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "NL",
@@ -189,9 +191,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1525
+   "ms": 1525,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "NL",
@@ -381,14 +384,15 @@
    "asks": true,
    "rejectFirst": false,
    "settingsOnly": false,
-   "wall": false,
+   "wall": true,
    "cmp": [
     "Sourcepoint"
    ],
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12020
+   "ms": 12020,
+   "manual": "pay or consent, confirmed by hand"
   },
   {
    "country": "DE",
@@ -416,9 +420,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1537
+   "ms": 1537,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "DE",
@@ -465,14 +470,15 @@
    "asks": true,
    "rejectFirst": false,
    "settingsOnly": false,
-   "wall": false,
+   "wall": true,
    "cmp": [
     "Sourcepoint"
    ],
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12354
+   "ms": 12354,
+   "manual": "pay or consent, confirmed by hand"
   },
   {
    "country": "DE",
@@ -577,9 +583,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1545
+   "ms": 1545,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "DE",
@@ -591,9 +598,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1528
+   "ms": 1528,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "DE",
@@ -646,14 +654,15 @@
    "host": "check24.de",
    "finalHost": "www.check24.de",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
    "wall": false,
    "cmp": [],
    "tcf": false,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12118
+   "ms": 12118,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "DE",
@@ -665,9 +674,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1547
+   "ms": 1547,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "DE",
@@ -781,9 +791,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1542
+   "ms": 1542,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -795,9 +806,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1533
+   "ms": 1533,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -809,9 +821,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1538
+   "ms": 1538,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -850,7 +863,7 @@
    "host": "francetvinfo.fr",
    "finalHost": "www.franceinfo.fr",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
    "wall": false,
    "cmp": [
@@ -859,7 +872,8 @@
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12010
+   "ms": 12010,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "FR",
@@ -871,25 +885,27 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1532
+   "ms": 1532,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
    "host": "marmiton.org",
    "finalHost": "www.marmiton.org",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
-   "wall": true,
+   "wall": false,
    "cmp": [
     "Didomi"
    ],
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12054
+   "ms": 12054,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "FR",
@@ -901,9 +917,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1547
+   "ms": 1547,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -915,9 +932,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1546
+   "ms": 1546,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -943,9 +961,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1539
+   "ms": 1539,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -957,9 +976,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1527
+   "ms": 1527,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -988,9 +1008,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1571
+   "ms": 1571,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -1002,9 +1023,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1539
+   "ms": 1539,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
@@ -1025,16 +1047,17 @@
    "host": "free.fr",
    "finalHost": "www.free.fr",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
-   "wall": true,
+   "wall": false,
    "cmp": [
     "Didomi"
    ],
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12247
+   "ms": 12247,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "FR",
@@ -1057,7 +1080,7 @@
    "host": "doctissimo.fr",
    "finalHost": "www.doctissimo.fr",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
    "wall": false,
    "cmp": [
@@ -1066,7 +1089,8 @@
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12232
+   "ms": 12232,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "FR",
@@ -1078,16 +1102,17 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1545
+   "ms": 1545,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "FR",
    "host": "meteofrance.com",
    "finalHost": "meteofrance.com",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
    "wall": false,
    "cmp": [
@@ -1096,7 +1121,8 @@
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12073
+   "ms": 12073,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "FR",
@@ -1230,9 +1256,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1540
+   "ms": 1540,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "BE",
@@ -1255,7 +1282,7 @@
    "host": "rtbf.be",
    "finalHost": "www.rtbf.be",
    "asks": true,
-   "rejectFirst": false,
+   "rejectFirst": true,
    "settingsOnly": false,
    "wall": false,
    "cmp": [
@@ -1264,7 +1291,8 @@
    "tcf": true,
    "engine": "unresolved",
    "clicks": null,
-   "ms": 12164
+   "ms": 12164,
+   "manual": "reject button on first screen, confirmed by hand"
   },
   {
    "country": "BE",
@@ -1290,9 +1318,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1527
+   "ms": 1527,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "BE",
@@ -1348,9 +1377,10 @@
    "wall": false,
    "cmp": [],
    "tcf": false,
-   "engine": "clean",
+   "engine": "error",
    "clicks": null,
-   "ms": 1532
+   "ms": 1532,
+   "error": "blocked automated browser (manual check)"
   },
   {
    "country": "BE",
@@ -1488,5 +1518,6 @@
    "clicks": null,
    "ms": 1574
   }
- ]
+ ],
+ "checkedByHand": "2026-11-21"
 }
