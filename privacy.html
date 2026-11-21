@@ -39,7 +39,7 @@
   <div class="doc__head">
     <h1>We collect nothing. <span style="color:var(--color-ink-3)">That's the policy.</span></h1>
     <p class="doc__lede">BannerBye exists to keep cookie banners away from you. It would be a poor product if it tracked you while doing it. So it doesn't. This page explains exactly what the extension does, what it doesn't, and where the data lives.</p>
-    <p class="doc__meta">Last updated: 9 October 2026</p>
+    <p class="doc__meta">Last updated: 21 November 2026</p>
   </div>
 
   <article class="prose">
@@ -71,6 +71,8 @@
     <li><strong>Cached rules</strong> (the public list of button labels, see below) — saved in <code>chrome.storage.local</code> on your device only.</li>
     <li><strong>Stats and milestones</strong> (the "banners refused" counter and which milestones you've reached) — saved in <code>chrome.storage.local</code> on your device only.</li>
     <li><strong>Recent activity</strong> (from version 0.4.0) — the popup can show, as proof behind the counter, on which sites BannerBye refused a banner: the site's hostname, which consent platform was recognised, when, and how often. This is deliberately limited: one line per site (not a log of your visits), at most 40 sites, and every line is deleted automatically after seven days. It lives in <code>chrome.storage.local</code> only, is never included in a report, never sent anywhere, and you can clear the whole list with one tap in the popup.</li>
+    <li><strong>"Asked again" counter</strong> (from version 0.4.19) — so the popup can show that a site asked for consent again after BannerBye refused, the extension keeps per site the date of its first refusal there, the date of the latest one, and how many times the site asked again. Only for sites where BannerBye actually refused a visible banner, at most 100 sites, and each line is deleted 180 days after the last refusal. It lives in <code>chrome.storage.local</code> only, is never sent anywhere, and the same one tap that clears the activity list clears it too.</li>
+    <li><strong>Browser privacy signal</strong> (from version 0.4.19) — when your browser itself sends Global Privacy Control, the extension notes the date it last saw that, so the popup can explain the difference. One date, nothing else, on your device only.</li>
     </ul>
     <p>
     That's it. The extension keeps no browsing history and no record of the pages you read: the activity list above is a short per-site summary of where BannerBye did its work, nothing more. None of this data is sent anywhere by the extension.
@@ -108,7 +110,7 @@
     If you provide an email address, we use it for one purpose only: to send you a single message when the site you reported is handled. We do not add you to any list, we send nothing else, and we delete the address as soon as that one email goes out (or automatically within 180 days if no fix ships). Providing it is entirely optional.
     </p>
     <p>
-    <strong>How you hear back without giving us anything (from version 0.4.12).</strong> The ticket is kept in the extension's local storage on your device, next to the hostname you reported. At most once an hour, when you open the popup, the extension asks <code>https://bannerbye.com/api/report-status</code> for the status of your own tickets and shows one line under that site: received, being looked into, fixed (and in which version), or "not something BannerBye should change" with a short reason. Our server stores only the ticket code and the hostname it belongs to, for 180 days at most. There is no account, no email, no device identifier, and no way for us to tell which tickets came from the same person. Clearing the activity list in the popup also forgets the tickets.
+    <strong>How you hear back without giving us anything (from version 0.4.12).</strong> The ticket is kept in the extension's local storage on your device, next to the hostname you reported. At most once an hour (from version 0.4.15 also in the background, so a fix can show up as a small badge), the extension asks <code>https://bannerbye.com/api/report-status</code> for the status of your own tickets and shows one line under that site: received, being looked into, fixed (and in which version), or "not something BannerBye should change" with a short reason. Our server stores only the ticket code and the hostname it belongs to, for 180 days at most. There is no account, no email, no device identifier, and no way for us to tell which tickets came from the same person. Clearing the activity list in the popup also forgets the tickets.
     </p>
     <p>
     This is a <strong>one-tap user action</strong>, not background telemetry. The extension does not contact <code>/api/report</code> in any other circumstance.
@@ -141,7 +143,7 @@
     <ul>
     <li>Read passwords, credit cards, or phone numbers.</li>
     <li>Read or store your browsing history.</li>
-    <li>Send anything to our servers, except hostname when you tap "Report broken site" — see the section above.</li>
+    <li>Send anything to our servers, except the report you send by tapping "Report broken site" and the hourly status check for your own tickets — see the section above.</li>
     <li>Track you across sites or build user profiles.</li>
     <li>Run analytics, telemetry, or crash reporting.</li>
     </ul>
