@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Privacy Control vs cookie banners: what Safari&#x27;s new switch does | BannerBye</title>
+  <meta name="description" content="Safari, Edge and Chrome are adding Global Privacy Control. It asks sites not to sell your data, but in Europe it doesn&#x27;t remove cookie banners. Here&#x27;s why, and what does." />
+  <link rel="canonical" href="https://bannerbye.com/gpc" />
+  <meta property="og:title" content="Global Privacy Control and cookie banners" />
+  <meta property="og:description" content="Safari, Edge and Chrome are adding Global Privacy Control. It&#x27;s a good switch. It just doesn&#x27;t remove the banner." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bannerbye.com/gpc" />
+  <meta property="og:image" content="https://bannerbye.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Global Privacy Control and cookie banners" />
+  <meta name="twitter:description" content="Safari, Edge and Chrome are adding Global Privacy Control. It&#x27;s a good switch. It just doesn&#x27;t remove the banner." />
+  <meta name="twitter:image" content="https://bannerbye.com/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M50%2010%20L%2086%2022%20L%2086%2052%20Q%2086%2078%2C%2050%2092%20Q%2014%2078%2C%2014%2052%20L%2014%2022%20Z%22%20stroke%3D%22%230E1116%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2232%22%20width%3D%2248%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.18%22%2F%3E%3Crect%20x%3D%2226%22%20y%3D%2242%22%20width%3D%2236%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%230E1116%22%20opacity%3D%220.3%22%2F%3E%3Cpath%20d%3D%22M30%2058%20L%2046%2072%20L%2076%2040%22%20stroke%3D%22%23E85A2C%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/system.css" />
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "BannerBye",
+          "item": "https://bannerbye.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Global Privacy Control and cookie banners",
+          "item": "https://bannerbye.com/gpc"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Does Global Privacy Control remove cookie banners?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not in Europe. GPC asks websites not to sell or share your data, and several US states require sites to honour it. EU law has no rule that makes a site treat a browser signal as a refusal, so European sites keep showing their banner. BannerBye refuses that banner for you."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should I turn on Safari's Global Privacy Control if I use BannerBye?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. It costs nothing and it is your browser's own signal. BannerBye already sends the same signal on every site, and then does the part the switch can't: it answers the banner."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will the EU make websites respect browser signals?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Maybe, but not soon. The European Commission proposed it in November 2025. EU member states removed it from their negotiating position in 2026, and the European Parliament has not voted yet. Even once new cookie rules are adopted, member states get 24 months to put them into national law."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav__row">
+    <a class="brand" href="/" aria-label="BannerBye">
+      <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2 4 5.2v6.4c0 5 3.4 9.1 8 10.4 4.6-1.3 8-5.4 8-10.4V5.2L12 2Z" fill="var(--color-accent)"/>
+        <path d="m8.4 12.1 2.5 2.5 4.8-5" fill="none" stroke="var(--color-accent-ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Banner<em>Bye</em></span>
+    </a>
+    <nav class="nav__links" aria-label="Sections">
+      <a href="/#how">How it works</a>
+      <a href="/#compare">Compare</a>
+      <a href="/fixed">What we've fixed</a>
+    </nav>
+    <a class="btn btn--fill" data-install="primary" href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg">Add to Chrome</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div>
+        <p class="crumb"><a href="/">BannerBye</a><span>/</span>Global Privacy Control</p>
+        <h1 style="margin-top:var(--space-sm)">Your browser's new switch.<span class="off">Still a banner.</span></h1>
+        <p class="hero__lede">Safari, Edge and Chrome are adding Global Privacy Control. It's a good switch. It just doesn't do what the headlines promise.</p>
+        <div class="hero__cta">
+          <a class="btn btn--fill" data-install="primary" href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg">Add to Chrome — free</a>
+          <a class="btn btn--line" data-install="alt-a" href="https://addons.mozilla.org/firefox/addon/bannerbye/">Firefox</a>
+        </div>
+        <p class="hero__fine" data-install="note">Free on Chrome &amp; Firefox · €1.99 on iPhone &amp; iPad</p>
+      </div>
+      <div class="prose" style="margin-top:0">
+        <p>Global Privacy Control, GPC for short, is one setting in your browser. When it's on, every page you open gets a short note: don't sell or share my data. Technically it's a header, <code>Sec-GPC: 1</code>, plus a flag that page scripts can read.</p>
+        <p>In California and a growing list of US states, sites must treat that note as an opt-out. In Europe, a site needs your consent before it tracks you, and no law says a browser signal counts as your answer. So the banner stays.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="sec sec--tight wrap">
+      <div class="head head--solo"><h2>Where the switch is.</h2></div>
+      <div class="cmp">
+        <table>
+          <thead>
+            <tr><th scope="col">Browser</th><th scope="col">Global Privacy Control</th><th scope="col">On by default</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Safari (iPhone, iPad)</th><td>New in iOS 27.3, in beta since 3 November. Settings → Apps → Safari → Advanced → Use Global Privacy Control</td><td class="no">No</td></tr>
+            <tr><th scope="row">Microsoft Edge</th><td>Settings → Privacy, search, and services → Global Privacy Control. United States only, for now</td><td>—</td></tr>
+            <tr><th scope="row">Google Chrome</th><td>Experimental, in Chrome Canary only</td><td class="no">No</td></tr>
+            <tr><th scope="row">Firefox</th><td>Built in, under Settings → Privacy &amp; Security</td><td>In private windows</td></tr>
+            <tr><th scope="row">Brave, DuckDuckGo</th><td>Built in</td><td class="yes">Yes</td></tr>
+            <tr><th scope="row" class="is-us">Banner<em>Bye</em></th><td class="is-us"><strong>Sends GPC in every browser it runs in, and refuses the banner</strong></td><td class="is-us yes">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cmp__note">As of November 2026. Sources: <a href="https://9to5mac.com/2026/11/11/ios-27-3-adds-new-setting-to-bypass-website-cookie-popups-eventually/">9to5Mac</a>, <a href="https://borncity.com/news/microsoft-edge-gpc-datenschutzsignal-vorerst-nur-in-den-usa-verfuegbar/">Borncity</a>, <a href="https://webiterate.dev/global-privacy-control-chrome-56/">Webiterate</a>, <a href="https://cppa.ca.gov/meetings/materials/20260806_07_02.pdf">California Privacy Protection Agency</a>.</p>
+    </div>
+  </section>
+
+  <section class="sec sec--tight wrap">
+    <div class="verdict">
+      <h2>Turn on both.</h2>
+      <p>The switch tells sites not to sell your data. BannerBye tells them no to everything else, before the banner shows: it sends the same GPC signal, answers the consent framework most European publishers use with a refusal, and clicks the reject button where there is one.</p>
+      <p>Europe tried to make browser signals binding. The European Commission's proposal from November 2025 included it; EU member states took it out of their position in 2026, and the European Parliament is expected to vote in 2027. Until that's settled, someone has to say no on your behalf. That's us. Source: <a href="https://www.commandersact.com/the-quantum-lounge/enterprise-tag-manager/digital-omnibus-and-cookies-whats-coming/">Commanders Act, status 5 November 2026</a>.</p>
+      <a class="btn btn--fill" data-install="primary" href="https://chromewebstore.google.com/detail/gjeafgcfhehafjioplpjkocbglmhhbfg">Add to Chrome — free</a>
+    </div>
+  </section>
+
+  <section class="sec sec--tight wrap">
+    <div class="head head--solo"><h2>Questions</h2></div>
+    <div class="faq">
+      <details>
+        <summary>Does Global Privacy Control remove cookie banners?</summary>
+        <div class="faq__a">
+          <p>Not in Europe. GPC asks websites not to sell or share your data, and several US states require sites to honour it.</p>
+          <p>EU law has no rule that makes a site treat a browser signal as a refusal, so European sites keep showing their banner. BannerBye refuses that banner for you.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Should I turn on Safari&#x27;s Global Privacy Control if I use BannerBye?</summary>
+        <div class="faq__a">
+          <p>Yes. It costs nothing and it is your browser&#x27;s own signal.</p>
+          <p>BannerBye already sends the same signal on every site, and then does the part the switch can&#x27;t: it answers the banner.</p>
+        </div>
+      </details>
+      <details>
+        <summary>Will the EU make websites respect browser signals?</summary>
+        <div class="faq__a">
+          <p>Maybe, but not soon. The European Commission proposed it in November 2025. EU member states removed it from their negotiating position in 2026, and the European Parliament has not voted yet.</p>
+          <p>Even once new cookie rules are adopted, member states get 24 months to put them into national law.</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot wrap">
+  <p class="foot__say">Most banner tools hide. <span>We refuse.</span></p>
+  <div class="foot__meta">
+    <span>BannerBye © 2026 · Kreatrix B.V. · Made in Brainport.</span>
+    <nav class="foot__links" aria-label="Footer">
+      <a href="/try">Try it</a>
+      <a href="/gpc">GPC</a>
+      <a href="/banner-index">Banner index</a>
+      <a href="/agents">For agents</a>
+      <a href="/vs/ghostery">vs Ghostery</a>
+      <a href="/vs/i-dont-care-about-cookies">vs I Don't Care About Cookies</a>
+      <a href="/vs/consent-o-matic">vs Consent-O-Matic</a>
+      <a href="/vs/super-agent">vs Super Agent</a>
+      <a href="/privacy">Privacy</a>
+      <a href="https://github.com/BannerBye/BannerBye" target="_blank" rel="noopener">Open source</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="/install.js" defer></script>
+
+</body>
+</html>

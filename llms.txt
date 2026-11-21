@@ -14,6 +14,9 @@ Free on Chrome, Firefox and Microsoft Edge. On Safari for iPhone, iPad and Mac i
 - [Privacy policy](https://bannerbye.com/privacy)
 - [What we've fixed](https://bannerbye.com/fixed): a public, live log of user-reported sites and how long each fix took
 - [Try it](https://bannerbye.com/try): a page with a real cookie banner (reject hidden behind a settings step) that BannerBye refuses live in the visitor's own browser; shows which layer did it
+- [Global Privacy Control](https://bannerbye.com/gpc): what the new GPC switch in Safari (iOS 27.3), Edge and Chrome does, and why it does not remove cookie banners in Europe; BannerBye sends GPC and also refuses the banner
+- [Banner index](https://bannerbye.com/banner-index): monthly, open-method measurement of 100 popular sites in the Netherlands, Germany, France and Belgium: who asks for consent, who offers reject on the first screen, who runs a pay-or-consent wall
+- [For AI agents](https://bannerbye.com/agents): @bannerbye/refuse, BannerBye's engine as a Playwright/Puppeteer library and MCP server, so agents refuse banners instead of accepting them
 - [Signal check](https://bannerbye.com/tcf-check): live, in-browser decode of the IAB TCF consent string and GPC flag BannerBye sends to every site; also decodes any pasted TC string
 
 ## Comparisons
